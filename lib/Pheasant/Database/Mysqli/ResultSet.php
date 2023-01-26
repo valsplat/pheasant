@@ -14,6 +14,7 @@ class ResultSet implements \IteratorAggregate, \ArrayAccess, \Countable
     private $_affected;
     private $_hydrator;
     private $_fields;
+    private $_iterator;
 
     /**
      * Constructor.

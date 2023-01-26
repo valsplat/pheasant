@@ -16,6 +16,7 @@ class Connection
     private $_charset;
     private $_filter;
     private $_sequencePool;
+    private $_ssl_key;
     private $_strict;
     private $_selectedDatabase;
     private $_debug = false
