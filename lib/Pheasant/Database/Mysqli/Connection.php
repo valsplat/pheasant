@@ -17,6 +17,10 @@ class Connection
     private $_filter;
     private $_sequencePool;
     private $_ssl_key;
+    private $_ssl_ca;
+    private $_ssl_cert;
+    private $_ssl_capath;
+    private $_ssl_cipher;
     private $_strict;
     private $_selectedDatabase;
     private $_debug = false
