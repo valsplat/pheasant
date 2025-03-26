@@ -3,11 +3,13 @@
 namespace Pheasant\Database\Mysqli;
 
 /**
- * A collection of fields associated with a MySQL ResultSet
+ * A collection of fields associated with a MySQL ResultSet.
  */
 class Fields implements \IteratorAggregate, \Countable, \ArrayAccess
 {
-    private $_resultSet, $_count, $_fields=array();
+    private $_resultSet;
+    private $_count;
+    private $_fields = [];
 
     public function __construct($resultSet)
     {
@@ -22,11 +24,12 @@ class Fields implements \IteratorAggregate, \Countable, \ArrayAccess
 
     public function getIterator()
     {
-        $fields = array();
+        $fields = [];
 
         // make sure we have all of the lazy-loaded fields
-        for($i=0; $i<$this->_count; $i++)
+        for ($i = 0; $i < $this->_count; ++$i) {
             $fields[$i] = $this->offsetGet($i);
+        }
 
         return new \ArrayIterator($fields);
     }
@@ -36,11 +39,13 @@ class Fields implements \IteratorAggregate, \Countable, \ArrayAccess
 
     public function offsetGet($offset)
     {
-        if($offset >= $this->_count)
+        if ($offset >= $this->_count) {
             throw new \OutOfRangeException("No field exists at offset $offset");
+        }
 
-        if(!isset($this->_fields[$offset]))
+        if (!isset($this->_fields[$offset])) {
             $this->_fields[$offset] = $this->_resultSet->fetch_field_direct($offset);
+        }
 
         return $this->_fields[$offset];
     }

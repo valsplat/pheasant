@@ -2,43 +2,42 @@
 
 namespace Pheasant\Tests\Examples;
 
-use \Pheasant\DomainObject;
-use \Pheasant\Types;
-use \Pheasant\Types\SequenceType;
-use \Pheasant\Types\StringType;
-use \Pheasant\Types\IntegerType;
+use Pheasant\DomainObject;
+use Pheasant\Types\IntegerType;
+use Pheasant\Types\SequenceType;
+use Pheasant\Types\StringType;
 
 class Hero extends DomainObject
 {
     public function properties()
     {
-        return array(
-            'id' => new Types\SequenceType(),
-            'alias' => new Types\StringType(),
-            'identityid' => new Types\IntegerType(),
-            );
+        return [
+            'id' => new SequenceType(),
+            'alias' => new StringType(),
+            'identityid' => new IntegerType(),
+        ];
     }
 
     public function relationships()
     {
-        return array(
-            'Powers' => Power::hasMany('id','heroid'),
-            'SecretIdentity' => SecretIdentity::belongsTo('identityid','id', true),
-            );
+        return [
+            'Powers' => Power::hasMany('id', 'heroid'),
+            'SecretIdentity' => SecretIdentity::belongsTo('identityid', 'id', true),
+        ];
     }
 
-    public static function createHelper($alias, $identity, $powers=array())
+    public static function createHelper($alias, $identity, $powers = [])
     {
-        $hero = new Hero(array('alias'=>$alias));
+        $hero = new Hero(['alias' => $alias]);
         $hero->save();
 
-        $identity = new SecretIdentity(array('realname'=>$identity));
+        $identity = new SecretIdentity(['realname' => $identity]);
         $hero->SecretIdentity = $identity;
         $identity->save();
 
         foreach ($powers as $power) {
-            $power = new Power(array('description'=>$power));
-            $hero->Powers []= $power;
+            $power = new Power(['description' => $power]);
+            $hero->Powers[] = $power;
             $power->save();
         }
 
@@ -46,5 +45,4 @@ class Hero extends DomainObject
 
         return $hero;
     }
-
 }

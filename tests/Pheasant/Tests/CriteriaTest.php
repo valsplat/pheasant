@@ -2,17 +2,16 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant;
-use \Pheasant\Query\Criteria;
+use Pheasant\Query\Criteria;
 
-class CriteriaTest extends \Pheasant\Tests\MysqlTestCase
+class CriteriaTest extends MysqlTestCase
 {
     public function testBasicCriteria()
     {
         $c = new Criteria('column = ?', 'test');
         $this->assertEquals("(column = 'test')", $c->toSql());
 
-        $c = new Criteria('`column` = ?', array(array('a', 'b')));
+        $c = new Criteria('`column` = ?', [['a', 'b']]);
         $this->assertEquals("(`column` IN ('a','b'))", $c->toSql());
 
         $c = new Criteria('column > ?', 55);
@@ -21,7 +20,7 @@ class CriteriaTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testCriteriaFromArray()
     {
-        $c = new Criteria(array('key1' => 'val1', 'key2' => 'val2'));
+        $c = new Criteria(['key1' => 'val1', 'key2' => 'val2']);
         $this->assertEquals("(`key1`='val1' AND `key2`='val2')", $c->toSql());
     }
 
@@ -47,7 +46,7 @@ class CriteriaTest extends \Pheasant\Tests\MysqlTestCase
         $c = $c->or(
             Criteria::concatAnd('a > 1', $c->bind('b != ?', 'blargh')),
             'x = 1'
-            );
+        );
 
         $this->assertEquals("((a > 1 AND b != 'blargh') OR x = 1)",
             $c->toSql());

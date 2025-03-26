@@ -3,16 +3,16 @@
 namespace Pheasant\Types;
 
 /**
- * A basic character type
+ * A basic character type.
  */
 class CharacterType extends BaseType
 {
     private $_length;
 
     /**
-     * Constructor
+     * Constructor.
      */
-    public function __construct($length, $options=null)
+    public function __construct($length, $options = null)
     {
         parent::__construct($options);
         $this->_length = intval($length);

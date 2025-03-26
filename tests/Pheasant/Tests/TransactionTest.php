@@ -4,7 +4,7 @@ namespace Pheasant\Tests;
 
 use Pheasant\Database\Mysqli\Transaction;
 
-class TransactionTest extends \Pheasant\Tests\MysqlTestCase
+class TransactionTest extends MysqlTestCase
 {
     public function tearDown()
     {

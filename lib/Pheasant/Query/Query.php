@@ -2,9 +2,7 @@
 
 namespace Pheasant\Query;
 
-use Pheasant;
 use Pheasant\Database\Binder;
-use Traversable;
 
 /**
  * A query builder for generating SQL '92 SELECT statements.
@@ -15,8 +13,8 @@ class Query implements \IteratorAggregate, \Countable
     private $_select = '*';
     private $_from = [];
     private $_joins = [];
-    private $_limit = null;
-    private $_lock = null;
+    private $_limit;
+    private $_lock;
     private $_where;
     private $_group;
     private $_having;
@@ -32,7 +30,7 @@ class Query implements \IteratorAggregate, \Countable
      */
     public function __construct($connection = null)
     {
-        $this->_connection = $connection ?: Pheasant::instance()->connection();
+        $this->_connection = $connection ?: \Pheasant::instance()->connection();
     }
 
     /**
@@ -240,8 +238,8 @@ class Query implements \IteratorAggregate, \Countable
     public function toSql()
     {
         return implode(' ', array_filter([
-            $this->_clause(($this->_distinct
-                ? 'SELECT DISTINCT' : 'SELECT'), $this->_select),
+            $this->_clause($this->_distinct
+                ? 'SELECT DISTINCT' : 'SELECT', $this->_select),
             $this->_clause('FROM', $this->_from),
             implode(' ', $this->_joins),
             $this->_clause('WHERE', $this->_where),
@@ -250,7 +248,7 @@ class Query implements \IteratorAggregate, \Countable
             $this->_clause('ORDER BY', $this->_order),
             $this->_limit,
             $this->_lock,
-            ]));
+        ]));
     }
 
     public function __toString()
@@ -271,7 +269,7 @@ class Query implements \IteratorAggregate, \Countable
     /* (non-phpdoc)
      * @see \IteratorAggregate
      */
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
         return $this->execute();
     }

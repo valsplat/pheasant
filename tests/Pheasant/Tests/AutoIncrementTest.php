@@ -2,22 +2,22 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant\Mapper\RowMapper;
-use \Pheasant\DomainObject;
-use \Pheasant\Types;
+use Pheasant\DomainObject;
+use Pheasant\Mapper\RowMapper;
+use Pheasant\Types;
 
-class AutoIncrementTest extends \Pheasant\Tests\MysqlTestCase
+class AutoIncrementTest extends MysqlTestCase
 {
     public function setUp()
     {
         parent::setUp();
 
         // set up a domain object
-        $this->initialize('Pheasant\DomainObject', function($builder) {
-            $builder->properties(array(
+        $this->initialize('Pheasant\DomainObject', function ($builder) {
+            $builder->properties([
                 'id' => new Types\IntegerType(null, 'primary auto_increment'),
                 'value' => new Types\StringType(),
-            ));
+            ]);
         });
 
         // set up tables
@@ -25,9 +25,9 @@ class AutoIncrementTest extends \Pheasant\Tests\MysqlTestCase
         $this->migrate('domainobject', DomainObject::schema());
     }
 
-    public function testPrimaryKeyPersistAfterSave_Bug57()
+    public function testPrimaryKeyPersistAfterSaveBug57()
     {
-        $object = DomainObject::create(array('value'=>'llama'));
+        $object = DomainObject::create(['value' => 'llama']);
         $this->assertEquals(1, $object->id);
 
         $found = DomainObject::byId(1);

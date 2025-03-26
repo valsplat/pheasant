@@ -3,16 +3,16 @@
 namespace Pheasant\Types;
 
 /**
- * A Set type
+ * A Set type.
  */
 class SetType extends BaseType
 {
     private $_set;
 
     /**
-     * Constructor
+     * Constructor.
      */
-    public function __construct($set = array(), $options=null)
+    public function __construct($set = [], $options = null)
     {
         parent::__construct($options);
         $this->_set = $set;
@@ -31,7 +31,7 @@ class SetType extends BaseType
      */
     public function unmarshal($value)
     {
-        return explode(',',$value);
+        return explode(',', $value);
     }
 
     /* (non-phpdoc)
@@ -39,6 +39,6 @@ class SetType extends BaseType
      */
     public function marshal($value)
     {
-        return implode(',',$value);
+        return implode(',', $value);
     }
 }

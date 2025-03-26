@@ -2,8 +2,6 @@
 
 namespace Pheasant\Database\Mysqli;
 
-use Traversable;
-
 /**
  * Encapsulates the result of executing a statement.
  */
@@ -19,7 +17,7 @@ class ResultSet implements \IteratorAggregate, \ArrayAccess, \Countable
     /**
      * Constructor.
      *
-     * @param $link MySQLi
+     * @param $link   MySQLi
      * @param $result MySQLi_Result
      */
     public function __construct($link, $result = false)
@@ -39,7 +37,7 @@ class ResultSet implements \IteratorAggregate, \ArrayAccess, \Countable
     /* (non-phpdoc)
      * @see IteratorAggregate::getIterator()
      */
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
         if ($this->_result === false) {
             return new \EmptyIterator();

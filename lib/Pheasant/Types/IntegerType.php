@@ -2,19 +2,19 @@
 
 namespace Pheasant\Types;
 
-use \Pheasant\Database\TypedValue;
+use Pheasant\Database\TypedValue;
 
 /**
- * A basic integer type
+ * A basic integer type.
  */
 class IntegerType extends BaseType
 {
     public $width;
 
     /**
-     * Constructor
+     * Constructor.
      */
-    public function __construct($width=null, $options=null)
+    public function __construct($width = null, $options = null)
     {
         parent::__construct($options);
         $this->width = intval($width);
@@ -25,7 +25,7 @@ class IntegerType extends BaseType
      */
     public function columnSql($column, $platform)
     {
-        $type = $this->width ? "int({$this->width})" : "int";
+        $type = $this->width ? "int({$this->width})" : 'int';
 
         return $platform->columnSql($column, $type, $this->options());
     }

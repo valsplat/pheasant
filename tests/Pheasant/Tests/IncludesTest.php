@@ -6,7 +6,7 @@ use Pheasant\Tests\Examples\Hero;
 use Pheasant\Tests\Examples\Power;
 use Pheasant\Tests\Examples\SecretIdentity;
 
-class IncludesTest extends \Pheasant\Tests\MysqlTestCase
+class IncludesTest extends MysqlTestCase
 {
     public function setUp()
     {
@@ -17,7 +17,7 @@ class IncludesTest extends \Pheasant\Tests\MysqlTestCase
             ->create('hero', Hero::schema())
             ->create('power', Power::schema())
             ->create('secretidentity', SecretIdentity::schema())
-            ;
+        ;
 
         $this->pheasant
             ->connection()
@@ -71,7 +71,7 @@ class IncludesTest extends \Pheasant\Tests\MysqlTestCase
 
         // the first lookup of SecretIdentity should cache all the rest
         $powers = Power::all()->includes(
-          ['Hero' => ['SecretIdentity']])->toArray();
+            ['Hero' => ['SecretIdentity']])->toArray();
         $this->assertNotNull($powers[0]->Hero->SecretIdentity);
 
         // these should be from cache

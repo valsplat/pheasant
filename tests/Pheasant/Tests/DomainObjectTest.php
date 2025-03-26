@@ -2,12 +2,12 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant\Tests\Examples\Animal;
-use \Pheasant\Tests\Examples\Order;
-use \Pheasant\Tests\Examples\AnotherAnimal;
-use \Pheasant\Tests\Examples\AnimalWithNameDefault;
+use Pheasant\Tests\Examples\Animal;
+use Pheasant\Tests\Examples\AnimalWithNameDefault;
+use Pheasant\Tests\Examples\AnotherAnimal;
+use Pheasant\Tests\Examples\Order;
 
-class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
+class DomainObjectTest extends MysqlTestCase
 {
     public function setUp()
     {
@@ -19,16 +19,16 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
             ->initialize(Animal::schema())
             ->destroy(Order::schema())
             ->initialize(Order::schema())
-            ;
+        ;
     }
 
     public function testLoad()
     {
         $animal = new Animal();
-        $animal->load(array(
+        $animal->load([
             'type' => 'walrus',
             'name' => 'Frank the Walrus',
-        ));
+        ]);
 
         $this->assertEquals($animal->type, 'walrus');
         $this->assertEquals($animal->name, 'Frank the Walrus');
@@ -37,11 +37,11 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
     public function testFilteredLoad()
     {
         $animal = new Animal();
-        $animal->load(array(
+        $animal->load([
             'type' => 'walrus',
             'name' => 'Frank the Walrus',
-            'inject' => 'Bobby tables; DROP ALL TABLES'
-        ), array('type', 'name'));
+            'inject' => 'Bobby tables; DROP ALL TABLES',
+        ], ['type', 'name']);
 
         $this->assertCount(2, $animal->changes());
         $this->assertEquals($animal->type, 'walrus');
@@ -54,10 +54,10 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
         $animal = new Animal();
         $this->assertEquals($animal->type, 'llama');
         $this->assertEquals($animal->toArray(),
-            array('id' => NULL, 'type' => 'llama', 'name' => null, 'meta' => null));
+            ['id' => null, 'type' => 'llama', 'name' => null, 'meta' => null]);
 
-        $llama = new Animal(array('type'=>'llama'));
-        $frog = new Animal(Array('type'=>'frog'));
+        $llama = new Animal(['type' => 'llama']);
+        $frog = new Animal(['type' => 'frog']);
 
         $this->assertTrue($llama->equals($animal));
         $this->assertFalse($llama->equals($frog));
@@ -65,16 +65,16 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testImportUsesDefaultProperties()
     {
-        $animals = Animal::import(array(
-            array('name'=>'Larry Llama')
-        ));
+        $animals = Animal::import([
+            ['name' => 'Larry Llama'],
+        ]);
 
         $this->assertEquals('llama', $animals[0]->type);
     }
 
     public function testPropertyIsset()
     {
-        $animal = new Animal(array('name'=>'bob'));
+        $animal = new Animal(['name' => 'bob']);
 
         $this->assertTrue(isset($animal->type));
         $this->assertTrue(isset($animal->name));
@@ -83,16 +83,16 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
     }
 
     /**
-     * @expectedException Pheasant\Exception
+     * @expectedException \Pheasant\Exception
      */
     public function testGettingUnknownProperty()
     {
-        $animal = Animal::import(array(array('type'=>'Hippo')));
+        $animal = Animal::import([['type' => 'Hippo']]);
         $animal[0]->unknownKey;
     }
 
     /**
-     * @expectedException Pheasant\Exception
+     * @expectedException \Pheasant\Exception
      */
     public function testSavingUnknownProperty()
     {
@@ -114,17 +114,17 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testCountIsConsistent()
     {
-        $animal = Animal::import(array(
-            array('type'=>'Hippo'),
-            array('type'=>'Cat'),
-            array('type'=>'Llama'),
-            array('type'=>'Raptor'),
-        ));
+        $animal = Animal::import([
+            ['type' => 'Hippo'],
+            ['type' => 'Cat'],
+            ['type' => 'Llama'],
+            ['type' => 'Raptor'],
+        ]);
 
         $awesome = Animal::find("type = 'Cat' or type = 'Llama'");
         $this->assertEquals($awesome->count(), 2);
 
-        $scary = Animal::find("type = ?", 'Raptor');
+        $scary = Animal::find('type = ?', 'Raptor');
         $this->assertEquals($scary->count(), 1);
         $this->assertEquals($awesome->count(), 2);
         $this->assertEquals($awesome[1]->type, 'Llama');
@@ -132,18 +132,18 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
         $this->assertEquals($awesome[0]->type, 'Cat');
     }
 
-    public function testIssue11_DefaultValuesArePersistedInDatabase()
+    public function testIssue11DefaultValuesArePersistedInDatabase()
     {
-        $animal = new AnimalWithNameDefault(array('type'=>'horse'));
+        $animal = new AnimalWithNameDefault(['type' => 'horse']);
 
         $this->assertEquals($animal->name, 'blargh');
         $animal->save();
 
-        $this->assertRowCount(1, $this->connection()->table('animal')->query(array(
+        $this->assertRowCount(1, $this->connection()->table('animal')->query([
             'id' => $animal->id,
             'type' => 'horse',
             'name' => 'blargh',
-        )));
+        ]));
 
         $horse = AnimalWithNameDefault::byId(1);
         $this->assertEquals($horse->name, 'blargh');
@@ -151,9 +151,9 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testObjectTransaction()
     {
-        $animal = new Animal(array('type'=>'frog'));
+        $animal = new Animal(['type' => 'frog']);
 
-        $animal->transaction(function($animal) {
+        $animal->transaction(function ($animal) {
             $animal->save();
         });
 
@@ -164,8 +164,8 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
     {
         $this->assertCount(0, Animal::findByType('llama'));
 
-        $t = \Pheasant::transaction(function() {
-            $animal = new Animal(array('type'=>'llama'));
+        $t = \Pheasant::transaction(function () {
+            $animal = new Animal(['type' => 'llama']);
             $animal->save();
         }, false);
 
@@ -177,7 +177,7 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testReloadWithoutClosure()
     {
-        $llama = Animal::create(array('type'=>'llama'));
+        $llama = Animal::create(['type' => 'llama']);
 
         // update data in background
         $this->connection()->execute('UPDATE animal SET name="Frank" WHERE id=1');
@@ -190,52 +190,55 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testIssetWithBooleanValues()
     {
-        $llama = Animal::create(array('name' => false));
+        $llama = Animal::create(['name' => false]);
 
         $this->assertTrue(isset($llama->name));
     }
 
     public function testArrayAccess()
     {
-        $llama = Animal::create(array('name' => 'Frank'));
+        $llama = Animal::create(['name' => 'Frank']);
         $this->assertTrue(isset($llama['name']));
-        $this->assertEquals("Frank", $llama['name']);
+        $this->assertEquals('Frank', $llama['name']);
 
-        $llama = Animal::create(array('name' => null));
+        $llama = Animal::create(['name' => null]);
         $this->assertTrue(isset($llama['name']));
         $this->assertNull($llama['name']);
 
         $llama['name'] = 'Joe';
-        $this->assertEquals("Joe", $llama['name']);
+        $this->assertEquals('Joe', $llama['name']);
     }
 
-    public function testSettingTheSameValueDoesntTriggerChanged() {
-        $animal = new Animal(array('type' => 'horse'));
+    public function testSettingTheSameValueDoesntTriggerChanged()
+    {
+        $animal = new Animal(['type' => 'horse']);
         $animal->save();
-        $animal->load(array('type' => 'horse'));
+        $animal->load(['type' => 'horse']);
         $this->assertCount(0, $animal->changes());
     }
 
-    public function testChanged() {
-        $animal = new Animal(array('type' => 'horse'));
+    public function testChanged()
+    {
+        $animal = new Animal(['type' => 'horse']);
         $animal->save();
-        $animal->load(array('type' => 'frog'));
-        $this->assertEquals(array('type'=>'frog'), $animal->changes());
+        $animal->load(['type' => 'frog']);
+        $this->assertEquals(['type' => 'frog'], $animal->changes());
     }
 
     public function testStringCoercion()
     {
-        $llama = Animal::create(array('id' => 123));
+        $llama = Animal::create(['id' => 123]);
         $this->assertEquals('Pheasant\Tests\Examples\Animal[id=123]', (string) $llama);
     }
 
     public function testOverridenProperties()
     {
         $counter = 0;
-        $llama = Animal::create(array('id' => 123));
-        $llama->override('type', function() use(&$counter) {
-            $counter++;
-            return 'llama'.$counter;
+        $llama = Animal::create(['id' => 123]);
+        $llama->override('type', function () use (&$counter) {
+            ++$counter;
+
+            return 'llama' . $counter;
         });
 
         $this->assertEquals('llama1', $llama->type);
@@ -245,7 +248,7 @@ class DomainObjectTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testDomainObjectsWithReservedNames()
     {
-        $order = Order::create(array('id' => 1));
+        $order = Order::create(['id' => 1]);
         $this->assertNotNull($order);
         $this->assertEquals(1, Order::all()->count());
     }

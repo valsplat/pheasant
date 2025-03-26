@@ -2,8 +2,6 @@
 
 namespace Pheasant;
 
-use ArrayIterator;
-
 /**
  * An array-like structure that supports defaults and and numerically indexed keys.
  * Expands any options from int=>key to key=>$default.
@@ -41,9 +39,9 @@ class Options implements \IteratorAggregate
     /* (non-phpdoc)
      * @see IteratorAggregate
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): \ArrayIterator
     {
-        return new ArrayIterator($this->_options);
+        return new \ArrayIterator($this->_options);
     }
 
     public function __isset($key)
@@ -89,7 +87,7 @@ class Options implements \IteratorAggregate
             $options[] = ($value === $default)
                 ? $key
                 : sprintf('%s=%s', $key, urlencode($value))
-                ;
+            ;
         }
 
         return implode(' ', $options);

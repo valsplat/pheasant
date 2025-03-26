@@ -3,7 +3,6 @@
 namespace Pheasant;
 
 use Pheasant\Query\QueryIterator;
-use Traversable;
 
 class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
 {
@@ -15,12 +14,12 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
     private $_schema;
     private $_count;
     private $_includes = []
-        ;
+    ;
 
     /**
      * @param $class string the classname to hydrate
      * @param $query Query the query object
-     * @param $add Closure a closure to call when an object is appended
+     * @param $add   Closure a closure to call when an object is appended
      */
     public function __construct($class, $query, $add = false)
     {
@@ -182,6 +181,7 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
      * results in the collection.
      *
      * @param $args array an array to be passed to the constructor via call_user_func_array
+     *
      * @chainable
      */
     public function orCreate($args)
@@ -243,7 +243,7 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
     /**
      * Returns an iterator.
      */
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
         $this->_readonly = true;
 
@@ -286,8 +286,8 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
     {
         $this->_queryForWrite()
             ->distinct()
-            ->select($this->_schema->alias().'.*')
-            ;
+            ->select($this->_schema->alias() . '.*')
+        ;
 
         return $this;
     }

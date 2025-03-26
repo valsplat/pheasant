@@ -3,13 +3,12 @@
 namespace Pheasant\Database\Mysqli;
 
 /**
- * A mysql table name
+ * A mysql table name.
  */
 class TableName
 {
-    public
-        $table = NULL,
-        $database = NULL;
+    public $table;
+    public $database;
 
     public function __construct($table)
     {
@@ -24,7 +23,8 @@ class TableName
     {
         return (!is_null($this->database))
                 ? sprintf('%s.%s', $this->database, $this->table)
-                : sprintf('%s', $this->table);	}
+                : sprintf('%s', $this->table);
+    }
 
     public function quoted()
     {

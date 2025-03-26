@@ -4,7 +4,7 @@ namespace Pheasant\Database;
 
 /**
  * A wrapped for a value where the php type can be used
- * to map to the underlying database type
+ * to map to the underlying database type.
  */
 class TypedValue
 {
@@ -17,11 +17,11 @@ class TypedValue
 
     public function toSql($binder)
     {
-        if(is_int($this->value)) {
+        if (is_int($this->value)) {
             return $this->value;
-        } else if(is_float($this->value)) {
+        } elseif (is_float($this->value)) {
             // FIXME: locale hack https://github.com/lox/pheasant/pull/103
-            return strtr($this->value, "',",'..');
+            return strtr($this->value, "',", '..');
         }
 
         // default to quoted strings

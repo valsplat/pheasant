@@ -2,24 +2,24 @@
 
 namespace Pheasant\Relationships;
 
-use \Pheasant\Query\Criteria;
-use \Pheasant\Cache\ArrayCache;
+use Pheasant\Cache\ArrayCache;
+use Pheasant\Query\Criteria;
 
 /**
  * Finds all possible objects in a relationship that might exist in a query
- * and queries them in one shot for future hydration
+ * and queries them in one shot for future hydration.
+ *
  * @see http://stackoverflow.com/questions/97197/what-is-the-n1-selects-issue
  */
 class Includer
 {
-    private
-        $_query,
-        $_rel,
-        $_nested,
-        $_cache
-        ;
+    private $_query;
+    private $_rel;
+    private $_nested;
+    private $_cache
+    ;
 
-    public function __construct($query, $rel, $nested=array())
+    public function __construct($query, $rel, $nested = [])
     {
         $this->_query = $query;
         $this->_rel = $rel;
@@ -30,13 +30,13 @@ class Includer
     {
         $this->_cache = new ArrayCache();
         $ids = iterator_to_array(
-            $this->_query->select('DISTINCT '.$this->_rel->local)->execute()->column()
+            $this->_query->select('DISTINCT ' . $this->_rel->local)->execute()->column()
         );
 
         $relatedObjects = \Pheasant::instance()
             ->finderFor($this->_rel->class)
             ->find($this->_rel->class, new Criteria(
-                $this->_rel->foreign.'=?', array($ids))
+                $this->_rel->foreign . '=?', [$ids])
             )
             ->includes($this->_nested);
 
@@ -47,7 +47,7 @@ class Includer
 
     public function get($object, $key)
     {
-        if(!isset($this->_cache)) {
+        if (!isset($this->_cache)) {
             $this->loadCache();
         }
 

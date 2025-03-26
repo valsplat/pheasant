@@ -10,35 +10,36 @@ class MysqlPlatform
     }
 
     /**
-     * Returns mysql column options for a given {@link Options}
+     * Returns mysql column options for a given {@link Options}.
+     *
      * @return string
      */
     private function _options($options)
     {
-        $result = array();
+        $result = [];
 
         // certain parameters have to occur first
         if (isset($options->unsigned)) {
-            $result []= 'unsigned';
+            $result[] = 'unsigned';
         }
 
         if (isset($options->zerofill)) {
-            $result []= 'zerofill';
+            $result[] = 'zerofill';
         }
 
-        foreach ($options as $key=>$value) {
+        foreach ($options as $key => $value) {
             switch ($key) {
                 case 'primary':
-                    $result [] = 'primary key';
+                    $result[] = 'primary key';
                     break;
 
                 case 'required':
                 case 'notnull':
-                    $result [] = 'not null';
+                    $result[] = 'not null';
                     break;
 
                 case 'default':
-                    $result []= sprintf("default '%s'", $value);
+                    $result[] = sprintf("default '%s'", $value);
                     break;
 
                 case 'sequence':
@@ -48,7 +49,7 @@ class MysqlPlatform
                     break;
 
                 default:
-                    $result []= $key;
+                    $result[] = $key;
                     break;
             }
         }

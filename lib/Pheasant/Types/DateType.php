@@ -25,6 +25,6 @@ class DateType extends BaseType
      */
     public function marshal($value)
     {
-        return parent::marshal($value->format("Y-m-d"));
+        return parent::marshal($value->format('Y-m-d'));
     }
 }

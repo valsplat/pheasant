@@ -2,60 +2,60 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant\Database\Binder;
+use Pheasant\Database\Binder;
 
-class BindingTest extends \Pheasant\Tests\MysqlTestCase
+class BindingTest extends MysqlTestCase
 {
     public function testBasicStringBinding()
     {
         $binder = new Binder();
         $this->assertEquals(
-            $binder->bind('SELECT * FROM table WHERE column=?', array('test')),
+            $binder->bind('SELECT * FROM table WHERE column=?', ['test']),
             "SELECT * FROM table WHERE column='test'"
-            );
+        );
     }
 
     public function testIntBinding()
     {
         $binder = new Binder();
         $this->assertEquals(
-            $binder->bind('column=?', array(24)),
+            $binder->bind('column=?', [24]),
             "column='24'"
-            );
+        );
     }
 
     public function testNullBinding()
     {
         $binder = new Binder();
         $this->assertEquals(
-            $binder->magicBind('column=?', array(null)),
+            $binder->magicBind('column=?', [null]),
             'column IS NULL'
-            );
+        );
     }
 
     public function testMultipleBinding()
     {
         $binder = new Binder();
         $this->assertEquals(
-            $binder->magicBind('a=? and b=?', array(24, 'test')),
+            $binder->magicBind('a=? and b=?', [24, 'test']),
             "a='24' and b='test'"
-            );
+        );
     }
 
     public function testArrayBinding()
     {
         $binder = new Binder();
         $this->assertEquals(
-            $binder->magicBind('a=? and b=?', array(24, array(1, 2, "llama's"))),
+            $binder->magicBind('a=? and b=?', [24, [1, 2, "llama's"]]),
             "a='24' and b IN ('1','2','llama\'s')"
-            );
+        );
     }
 
     public function testEmptyArrayBinding()
     {
         $binder = new Binder();
         $this->assertEquals(
-            $binder->magicBind('x=?', array(array())),
+            $binder->magicBind('x=?', [[]]),
             'x IN (null)'
         );
     }
@@ -64,25 +64,25 @@ class BindingTest extends \Pheasant\Tests\MysqlTestCase
     {
         $binder = new Binder();
         $this->assertEquals(
-            $binder->bind('x=?', array('10\'; DROP TABLE --')),
+            $binder->bind('x=?', ['10\'; DROP TABLE --']),
             "x='10\'; DROP TABLE --'"
-            );
+        );
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function testBindMissingParameters()
     {
         $binder = new Binder();
-        $binder->bind('x=? and y=?', array(24));
+        $binder->bind('x=? and y=?', [24]);
     }
 
     public function testBoolBinding()
     {
         $binder = new Binder();
         $this->assertEquals(
-            $binder->bind('column1=? and column2=?', array(false, true)),
+            $binder->bind('column1=? and column2=?', [false, true]),
             "column1='' and column2=1"
         );
     }
@@ -92,7 +92,7 @@ class BindingTest extends \Pheasant\Tests\MysqlTestCase
         $binder = new Binder();
 
         $this->assertEquals(
-            $binder->bind("name='???' and llamas=?", array(24)),
+            $binder->bind("name='???' and llamas=?", [24]),
             "name='???' and llamas='24'"
         );
     }
@@ -102,17 +102,17 @@ class BindingTest extends \Pheasant\Tests\MysqlTestCase
         $binder = new Binder();
 
         $this->assertEquals(
-            $binder->bind("name='\'7r' and llamas=?", array(24)),
+            $binder->bind("name='\'7r' and llamas=?", [24]),
             "name='\'7r' and llamas='24'"
         );
 
         $this->assertEquals(
-            $binder->bind("name='\'7r\\\\' and another='test question?' and llamas=?", array(24)),
+            $binder->bind("name='\'7r\\\\' and another='test question?' and llamas=?", [24]),
             "name='\'7r\\\\' and another='test question?' and llamas='24'"
         );
 
         $this->assertEquals(
-            $binder->bind("name='\'7r\\\\' and x='\'7r' and llamas=?", array(24)),
+            $binder->bind("name='\'7r\\\\' and x='\'7r' and llamas=?", [24]),
             "name='\'7r\\\\' and x='\'7r' and llamas='24'"
         );
     }
@@ -122,7 +122,7 @@ class BindingTest extends \Pheasant\Tests\MysqlTestCase
         $binder = new Binder();
 
         $this->assertEquals(
-            $binder->bind("name='\"' and llamas=?", array(24)),
+            $binder->bind("name='\"' and llamas=?", [24]),
             "name='\"' and llamas='24'"
         );
     }
@@ -131,7 +131,7 @@ class BindingTest extends \Pheasant\Tests\MysqlTestCase
     {
         $binder = new Binder();
         $this->assertEquals(
-            $binder->magicBind('`id`=?', array(1)),
+            $binder->magicBind('`id`=?', [1]),
             "`id`='1'"
         );
     }

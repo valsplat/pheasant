@@ -2,27 +2,26 @@
 
 namespace Pheasant\Tests\Examples;
 
-use \Pheasant\DomainObject;
-use \Pheasant\Types;
-use \Pheasant\Types\SequenceType;
-use \Pheasant\Types\StringType;
-use \Pheasant\Types\IntegerType;
+use Pheasant\DomainObject;
+use Pheasant\Types\IntegerType;
+use Pheasant\Types\SequenceType;
+use Pheasant\Types\StringType;
 
 class Power extends DomainObject
 {
     public function properties()
     {
-        return array(
-            'id' => new Types\SequenceType(),
-            'description' => new Types\StringType(),
-            'heroid' => new Types\IntegerType()
-            );
+        return [
+            'id' => new SequenceType(),
+            'description' => new StringType(),
+            'heroid' => new IntegerType(),
+        ];
     }
 
     public function relationships()
     {
-        return array(
-            'Hero' => Hero::belongsTo('heroid','id')
-            );
+        return [
+            'Hero' => Hero::belongsTo('heroid', 'id'),
+        ];
     }
 }

@@ -2,4 +2,6 @@
 
 namespace Pheasant\Locking;
 
-class StaleObjectException extends LockingException {}
+class StaleObjectException extends LockingException
+{
+}

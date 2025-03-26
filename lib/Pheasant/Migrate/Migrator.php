@@ -10,14 +10,16 @@ class Migrator
 {
     private $_pheasant;
 
-    public function __construct($pheasant=null)
+    public function __construct($pheasant = null)
     {
         $this->_pheasant = $pheasant ?: \Pheasant::instance();
     }
 
     /**
-     * Creates the underlying tables for a schema, dropping any tables of the same names
+     * Creates the underlying tables for a schema, dropping any tables of the same names.
+     *
      * @deprecated use initialize
+     *
      * @chainable
      */
     public function create($table, $schema)
@@ -25,14 +27,15 @@ class Migrator
         return $this
             ->destroy($schema, $table)
             ->initialize($schema, $table)
-            ;
+        ;
     }
 
     /**
-     * Sets up an tables and sequences for a Schema
+     * Sets up an tables and sequences for a Schema.
+     *
      * @chainable
      */
-    public function initialize($schema, $table=null)
+    public function initialize($schema, $table = null)
     {
         $mapper = $this->_mapper($schema);
         $table = $table ? $this->_connection($schema)->table($table) : $mapper->table();
@@ -40,7 +43,7 @@ class Migrator
         $sequencePool = $this->_connection($schema)->sequencePool();
         $sequencePool->initialize();
 
-        $columns = array();
+        $columns = [];
 
         // build a map of properties to create
         foreach ($schema->properties() as $prop) {
@@ -58,9 +61,9 @@ class Migrator
     }
 
     /**
-     * Destroy tables and sequences for a Schema
+     * Destroy tables and sequences for a Schema.
      */
-    public function destroy($schema, $table=null)
+    public function destroy($schema, $table = null)
     {
         $mapper = $this->_mapper($schema);
         $table = $table ? $this->_connection($schema)->table($table) : $mapper->table();
@@ -88,6 +91,6 @@ class Migrator
 
     private function _connection($schema)
     {
-        return call_user_func(array($schema->className(), 'connection'));
+        return call_user_func([$schema->className(), 'connection']);
     }
 }

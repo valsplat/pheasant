@@ -14,7 +14,7 @@ class SequenceTest extends \Pheasant\Tests\MysqlTestCase
         $this->pool
             ->initialize()
             ->clear()
-            ;
+        ;
 
         $this->assertTableExists(SequencePool::TABLE);
     }

@@ -2,9 +2,8 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant;
-use \Pheasant\Database\Mysqli;
-use \Pheasant\Database\Dsn;
+use Pheasant\Database\Dsn;
+use Pheasant\Database\Mysqli;
 
 class ConnectionTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,7 +18,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
 
     public function testConnecting()
     {
-        $this->assertTrue(is_numeric($this->conn->execute("SELECT CONNECTION_ID()")->scalar()));
+        $this->assertTrue(is_numeric($this->conn->execute('SELECT CONNECTION_ID()')->scalar()));
     }
 
     public function testConnectingUsingSsl()
@@ -31,21 +30,21 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
 
     public function testReconnecting()
     {
-        $id = $this->conn->execute("SELECT CONNECTION_ID()")->scalar();
+        $id = $this->conn->execute('SELECT CONNECTION_ID()')->scalar();
 
         // force a re-connect
         $this->conn->connect();
-        $this->assertNotEquals($id, $this->conn->execute("SELECT CONNECTION_ID()")->scalar());
+        $this->assertNotEquals($id, $this->conn->execute('SELECT CONNECTION_ID()')->scalar());
     }
 
     public function testSelectedDatabase()
     {
-        $this->assertEquals("pheasanttest", $this->conn->selectedDatabase());
+        $this->assertEquals('pheasanttest', $this->conn->selectedDatabase());
     }
 
     public function testSelectDatabase()
     {
-        $dsn = $this->dsn->copy(array('database'=>''));
+        $dsn = $this->dsn->copy(['database' => '']);
         $conn = new Mysqli\Connection($dsn);
 
         $this->assertNull($conn->selectedDatabase());
@@ -56,7 +55,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
 
     public function testSelectNonexistantDatabaseFails()
     {
-        $dsn = $this->dsn->copy(array('database'=>''));
+        $dsn = $this->dsn->copy(['database' => '']);
         $conn = new Mysqli\Connection($dsn);
 
         $this->expectException('\Pheasant\Database\Mysqli\Exception');

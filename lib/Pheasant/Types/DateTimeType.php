@@ -3,7 +3,7 @@
 namespace Pheasant\Types;
 
 /**
- * A date and time type
+ * A date and time type.
  */
 class DateTimeType extends BaseType
 {
@@ -28,6 +28,6 @@ class DateTimeType extends BaseType
      */
     public function marshal($value)
     {
-        return parent::marshal($value->format("c"));
+        return parent::marshal($value->format('c'));
     }
 }

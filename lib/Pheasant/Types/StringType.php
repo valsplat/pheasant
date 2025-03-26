@@ -2,17 +2,17 @@
 
 namespace Pheasant\Types;
 
-use \Pheasant\Database\TypedValue;
+use Pheasant\Database\TypedValue;
 
 /**
- * A basic string type
+ * A basic string type.
  */
 class StringType extends BaseType
 {
     private $_length;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct($length = 255, $options = null)
     {
@@ -28,11 +28,11 @@ class StringType extends BaseType
         if ($this->_length <= 255) {
             return $platform->columnSql($column, "varchar({$this->_length})", $this->options());
         } elseif ($this->_length <= 65534) {
-            return $platform->columnSql($column, "text", $this->options());
+            return $platform->columnSql($column, 'text', $this->options());
         } elseif ($this->_length <= 16777214) {
-            return $platform->columnSql($column, "mediumtext", $this->options());
+            return $platform->columnSql($column, 'mediumtext', $this->options());
         } elseif ($this->_length <= 4294967294) {
-            return $platform->columnSql($column, "longtext", $this->options());
+            return $platform->columnSql($column, 'longtext', $this->options());
         } else {
             throw new \BadMethodCallException("Unhandled string length of {$this->_length}");
         }
@@ -44,13 +44,9 @@ class StringType extends BaseType
     public function marshal($value)
     {
         if ($this->options()->allowed && !in_array($value, $this->options()->allowed)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Allowed values for this field are %s.',
-                    implode(', ', $this->options()->allowed)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Allowed values for this field are %s.', implode(', ', $this->options()->allowed)));
         }
+
         return new TypedValue((string) $value);
     }
 }

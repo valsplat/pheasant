@@ -5,7 +5,7 @@ namespace Pheasant\Tests;
 use Pheasant\Tests\Examples\Post;
 use Pheasant\Types;
 
-class MappingTest extends \Pheasant\Tests\MysqlTestCase
+class MappingTest extends MysqlTestCase
 {
     public function setUp()
     {
@@ -15,7 +15,7 @@ class MappingTest extends \Pheasant\Tests\MysqlTestCase
             'postid' => new Types\IntegerType(11, 'primary auto_increment'),
             'title' => new Types\StringType(255, 'required'),
             'subtitle' => new Types\StringType(255),
-            ]);
+        ]);
     }
 
     public function testBasicSaving()
@@ -64,7 +64,7 @@ class MappingTest extends \Pheasant\Tests\MysqlTestCase
         $posts = Post::import([
             ['title' => 'First Post'],
             ['title' => 'Second Post'],
-            ]);
+        ]);
 
         $this->assertEquals(count($posts), 2);
         $this->assertEquals($posts[0]->postid, 1);

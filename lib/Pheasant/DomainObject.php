@@ -2,7 +2,6 @@
 
 namespace Pheasant;
 
-use Pheasant;
 use Pheasant\Mapper\RowMapper;
 
 /**
@@ -22,7 +21,7 @@ class DomainObject implements \ArrayAccess
      */
     final public function __construct()
     {
-        $pheasant = Pheasant::instance();
+        $pheasant = \Pheasant::instance();
         $pheasant->initialize($this);
 
         // pull default values from schema
@@ -32,7 +31,7 @@ class DomainObject implements \ArrayAccess
         $constructor = method_exists($this, 'construct')
             ? 'construct'
             : '_defaultConstruct'
-            ;
+        ;
 
         call_user_func_array([$this, $constructor], func_get_args());
     }
@@ -65,7 +64,7 @@ class DomainObject implements \ArrayAccess
         $builder
             ->properties($instance->properties())
             ->relationships($instance->relationships())
-            ;
+        ;
     }
 
     /**
@@ -96,7 +95,7 @@ class DomainObject implements \ArrayAccess
     public function save()
     {
         $event = $this->isSaved() ? 'Update' : 'Create';
-        $mapper = Pheasant::instance()->mapperFor($this);
+        $mapper = \Pheasant::instance()->mapperFor($this);
 
         $this->events()->wrap([$event, 'Save'], $this, function ($obj) use ($mapper) {
             $mapper->save($obj);
@@ -154,7 +153,7 @@ class DomainObject implements \ArrayAccess
      */
     public function delete()
     {
-        $mapper = Pheasant::instance()->mapperFor($this);
+        $mapper = \Pheasant::instance()->mapperFor($this);
 
         $this->events()->wrap(['Delete'], $this, function ($obj) use ($mapper) {
             $mapper->delete($obj);
@@ -189,7 +188,7 @@ class DomainObject implements \ArrayAccess
      */
     public static function schema()
     {
-        return Pheasant::instance()->schema(isset($this)
+        return \Pheasant::instance()->schema(isset($this)
             ? $this : get_called_class());
     }
 
@@ -211,7 +210,7 @@ class DomainObject implements \ArrayAccess
      */
     public static function connection()
     {
-        return Pheasant::instance()->connection();
+        return \Pheasant::instance()->connection();
     }
 
     /**
@@ -307,7 +306,7 @@ class DomainObject implements \ArrayAccess
     {
         $this->events()
             ->register('*', [$this, 'eventHandler'])
-            ;
+        ;
     }
 
     // ----------------------------------------
@@ -407,7 +406,7 @@ class DomainObject implements \ArrayAccess
         if (preg_match('/^(find|all$|byId$|one)/', $method)) {
             return Finder\Wizard::fromClass(get_called_class())->dispatch($method, $params);
         } elseif (preg_match('/^(hasOne|hasMany|belongsTo)$/', $method)) {
-            $refl = new \ReflectionClass('\Pheasant\\Relationships\\'.ucfirst($method));
+            $refl = new \ReflectionClass('\Pheasant\\Relationships\\' . ucfirst($method));
             array_unshift($params, get_called_class());
 
             return $refl->newInstanceArgs($params);
@@ -450,8 +449,6 @@ class DomainObject implements \ArrayAccess
      * Gets a property.
      *
      * @param string the property to get the value of
-     *
-     * @return mixed
      */
     public function get($prop)
     {
@@ -486,6 +483,7 @@ class DomainObject implements \ArrayAccess
      * Loads an array of values into the object.
      *
      * @param $filter only processes the keys listed, or false for all
+     *
      * @chainable
      */
     public function load($array, $filter = false)
@@ -530,7 +528,7 @@ class DomainObject implements \ArrayAccess
         $fresh = \Pheasant::instance()->finderFor($this)
             ->find($this->className(), $this->identity()->toCriteria())
             ->one()
-            ;
+        ;
 
         $this->_data = $fresh->_data;
 

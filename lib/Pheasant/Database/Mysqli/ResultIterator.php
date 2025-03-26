@@ -116,7 +116,7 @@ class ResultIterator implements \SeekableIterator, \Countable
         return isset($this->_hydrator)
             ? call_user_func($this->_hydrator, $this->_result->fetch_array(MYSQLI_ASSOC))
           : $this->_result->fetch_array(MYSQLI_ASSOC)
-            ;
+        ;
     }
 
     public function toArray(): array

@@ -5,7 +5,8 @@ namespace Pheasant\Types;
 use Pheasant\Exception;
 
 /**
- * A JSON type
+ * A JSON type.
+ *
  * @see https://dev.mysql.com/doc/refman/5.7/en/json.html
  */
 class JsonType extends BaseType
@@ -24,11 +25,11 @@ class JsonType extends BaseType
     public function unmarshal($value)
     {
         $value = json_decode($value);
-        
+
         if (json_last_error()) {
             throw new Exception('Could not unmarshal json: ' . json_last_error_msg());
         }
-        
+
         return $value;
     }
 
@@ -38,11 +39,11 @@ class JsonType extends BaseType
     public function marshal($value)
     {
         $value = json_encode($value);
-        
+
         if (json_last_error()) {
             throw new Exception('Could not marshal json: ' . json_last_error_msg());
         }
-        
+
         return $value;
     }
 }

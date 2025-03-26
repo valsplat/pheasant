@@ -2,9 +2,9 @@
 
 namespace Pheasant\Tests\Examples;
 
-use \Pheasant\DomainObject;
-use \Pheasant\Types;
-use \Pheasant\Mapper\RowMapper;
+use Pheasant\DomainObject;
+use Pheasant\Mapper\RowMapper;
+use Pheasant\Types;
 
 class Post extends DomainObject
 {
@@ -14,11 +14,11 @@ class Post extends DomainObject
             ->register(__CLASS__, new RowMapper('post'));
 
         $builder
-            ->properties(array(
+            ->properties([
                 'postid' => new Types\IntegerType(11, 'primary auto_increment'),
                 'title' => new Types\StringType(255, 'required'),
                 'subtitle' => new Types\StringType(255),
-            ));
+            ]);
     }
 
     protected function construct($title)

@@ -2,8 +2,8 @@
 
 namespace Pheasant\Relationships;
 
-use \Pheasant\PropertyReference;
-use \Pheasant\Relationship;
+use Pheasant\PropertyReference;
+use Pheasant\Relationship;
 
 /**
  * A HasOne relationship represents a 1->1 relationship. The local object owns
@@ -18,9 +18,9 @@ class HasOne extends Relationship
     private $_allowEmpty;
 
     /**
-     * Constructor
+     * Constructor.
      */
-    public function __construct($class, $local, $foreign=null, $allowEmpty=false)
+    public function __construct($class, $local, $foreign = null, $allowEmpty = false)
     {
         parent::__construct($class, $local, $foreign);
         $this->_allowEmpty = $allowEmpty;
@@ -29,27 +29,26 @@ class HasOne extends Relationship
     /* (non-phpdoc)
      * @see Relationship::get()
      */
-    public function get($object, $key, $cache=null)
+    public function get($object, $key, $cache = null)
     {
         if ($cache) {
             $schema = \Pheasant::instance()->schema($this->class);
-            if ($cached = $cache->get($schema->hash($object, array(array($this->local, $this->foreign))))) {
+            if ($cached = $cache->get($schema->hash($object, [[$this->local, $this->foreign]]))) {
                 return $cached;
             }
         }
 
         if (($localValue = $object->{$this->local}) === null) {
-            if($this->_allowEmpty) {
+            if ($this->_allowEmpty) {
                 return null;
             } else {
-                throw new \Pheasant\Exception("Local value is null while not allowed");
+                throw new \Pheasant\Exception('Local value is null while not allowed');
             }
         }
 
         $result = $this
             ->query("{$this->foreign}=?", $localValue)
             ->execute();
-            ;
 
         if (!count($result)) {
             if ($this->_allowEmpty) {
@@ -69,8 +68,9 @@ class HasOne extends Relationship
     {
         $newValue = $object->{$this->local};
 
-        if($newValue instanceof PropertyReference)
+        if ($newValue instanceof PropertyReference) {
             $object->saveAfter($value);
+        }
 
         $value->set($this->foreign, $newValue);
     }

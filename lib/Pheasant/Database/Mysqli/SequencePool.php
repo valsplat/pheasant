@@ -7,35 +7,38 @@ namespace Pheasant\Database\Mysqli;
  */
 class SequencePool
 {
-    const TABLE='sequences';
-    private $_connection, $_startId;
+    public const TABLE = 'sequences';
+    private $_connection;
+    private $_startId;
 
     /**
-     * Constructor
+     * Constructor.
      */
-    public function __construct($connection, $startId=1)
+    public function __construct($connection, $startId = 1)
     {
         $this->_connection = $connection;
         $this->_startId = $startId;
     }
 
     /**
-     * Creates the sequence table if it doesn't exist
+     * Creates the sequence table if it doesn't exist.
+     *
      * @chainable
      */
     public function initialize()
     {
         $this->_connection->table(self::TABLE)
-            ->createIfNotExists(array(
+            ->createIfNotExists([
                 'name' => new \Pheasant\Types\StringType(255, 'notnull primary'),
                 'id' => new \Pheasant\Types\IntegerType(null, 'notnull unsigned'),
-                ));
+            ]);
 
         return $this;
     }
 
     /**
-     * Clears either the whole pool
+     * Clears either the whole pool.
+     *
      * @chainable
      */
     public function clear()
@@ -46,43 +49,45 @@ class SequencePool
     }
 
     /**
-     * Deletes a given sequence from the pool
+     * Deletes a given sequence from the pool.
+     *
      * @chainable
      */
     public function delete($sequence)
     {
         $this->_connection->execute(
-            "DELETE FROM sequences WHERE name=?", $sequence);
+            'DELETE FROM sequences WHERE name=?', $sequence);
 
         return $this;
     }
 
     /**
-     * Returns the next integer in the sequence
+     * Returns the next integer in the sequence.
      */
     public function next($sequence)
     {
         // execute in transaction
         $results = $this->_connection
-            ->transaction(array($this,'_nextSequence'), strtoupper($sequence))
+            ->transaction([$this, '_nextSequence'], strtoupper($sequence))
             ->execute();
 
         return (int) $results[0];
     }
 
     /**
-     * Returns the current integer in the sequence
+     * Returns the current integer in the sequence.
      */
     public function current($sequence)
     {
         $result = $this->_connection->execute(
-            "SELECT id FROM sequences WHERE name=?", $sequence);
+            'SELECT id FROM sequences WHERE name=?', $sequence);
 
         return (int) $result[0]['id'] - 1;
     }
 
     /**
-     * Closes a connection
+     * Closes a connection.
+     *
      * @chainable
      */
     public function close()
@@ -93,32 +98,31 @@ class SequencePool
     }
 
     /**
-     * Called within a transaction, gets the next sequence value
-     * @access private
+     * Called within a transaction, gets the next sequence value.
      */
     public function _nextSequence($sequence)
     {
         $sequence = strtoupper($sequence);
         $id = $this->_lockSequence($sequence);
         $increment = $this->_connection->execute(
-            "UPDATE sequences SET id=id+1 WHERE name=?", $sequence);
+            'UPDATE sequences SET id=id+1 WHERE name=?', $sequence);
 
         return $id;
     }
 
     /**
-     * Locks the sequence, creates it if needed and returns the current value
+     * Locks the sequence, creates it if needed and returns the current value.
      */
     private function _lockSequence($sequence)
     {
         $result = $this->_connection->execute(
-            "SELECT id FROM sequences WHERE name=? FOR UPDATE", $sequence);
+            'SELECT id FROM sequences WHERE name=? FOR UPDATE', $sequence);
 
         switch (count($result)) {
             case 0:
                 // sequence not in table; insert and use startId value
                 $this->_connection->execute(
-                    "INSERT INTO sequences VALUES (?,?)",
+                    'INSERT INTO sequences VALUES (?,?)',
                     $sequence, $this->_startId);
                 $id = $this->_startId;
                 break;

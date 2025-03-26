@@ -29,6 +29,7 @@ class QueryIterator implements \SeekableIterator, \Countable
      * Sets a hydrator to be used.
      *
      * @param closure A closure that takes a row and returns an object
+     *
      * @chainable
      */
     public function setHydrator($hydrator)

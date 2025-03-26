@@ -2,18 +2,20 @@
 
 namespace Pheasant\Finder;
 
-use \Pheasant\Query\Criteria;
+use Pheasant\Query\Criteria;
 
 /**
  * Handles dispatching find, all and one methods to Finder objects,
- * provides magical finder methods via schema inspection
+ * provides magical finder methods via schema inspection.
  */
 class Wizard
 {
-    private $_class, $_schema, $_finder;
+    private $_class;
+    private $_schema;
+    private $_finder;
 
     /**
-     * Construct
+     * Construct.
      */
     public function __construct($schema, $finder)
     {
@@ -23,16 +25,18 @@ class Wizard
     }
 
     /**
-     * Delegates directory to the Finder::find method
+     * Delegates directory to the Finder::find method.
+     *
      * @return Collection
      */
-    public function find($criteria=null)
+    public function find($criteria = null)
     {
         return $this->_finder->find($this->_class, $criteria);
     }
 
     /**
-     * Magically derives a query to send to the internal finder
+     * Magically derives a query to send to the internal finder.
+     *
      * @return mixed Either a Collection or a DomainObject
      */
     public function dispatch($method, $params)
@@ -43,26 +47,26 @@ class Wizard
         }
 
         // handle find or one with sql params
-        else if (($method == 'find' || $method == 'one') && is_string($params[0])) {
+        elseif (($method == 'find' || $method == 'one') && is_string($params[0])) {
             $rs = $this->find(new Criteria(array_shift($params), $params));
 
             return $method == 'one' ? $rs->one() : $rs;
         }
 
         // handle magical finders
-        else if (preg_match('/^(findBy|oneBy)/', $method)) {
+        elseif (preg_match('/^(findBy|oneBy)/', $method)) {
             $rs = $this->find(new Criteria($this->_sqlFromMethod($method), $params));
 
             return preg_match('/^(oneBy)/', $method) ? $rs->one() : $rs;
         }
 
         // handle byId
-        else if ($method == 'byId') {
+        elseif ($method == 'byId') {
             return $this->_findById($params);
         }
 
         // Criteria search
-        else if (isset($params[0]) && $params[0] instanceof Criteria) {
+        elseif (isset($params[0]) && $params[0] instanceof Criteria) {
             return $this->find($params[0]);
         }
 
@@ -73,7 +77,8 @@ class Wizard
     }
 
     /**
-     * Helper to build Wizard
+     * Helper to build Wizard.
+     *
      * @return Wizard
      */
     public static function fromClass($className)
@@ -85,12 +90,13 @@ class Wizard
     }
 
     /**
-     * Find an object by primary key
+     * Find an object by primary key.
      */
     private function _findById($params)
     {
-        if(count($params) > 1)
+        if (count($params) > 1) {
             throw new \InvalidArgumentException("byId doesn't support composite keys");
+        }
 
         $keys = array_keys($this->_schema->primary());
 
@@ -103,14 +109,15 @@ class Wizard
      */
     private function _sqlFromMethod($method)
     {
-        if(!preg_match('/^(findBy|oneBy)(.*?)$/', $method, $m))
+        if (!preg_match('/^(findBy|oneBy)(.*?)$/', $method, $m)) {
             throw new \BadMethodCallException("Unable to parse $method");
+        }
 
         // split on AND or OR and case boundries
-        $sql = strtolower(preg_replace('/(?<=[a-z0-9\b])(Or|And)(?=[A-Z])/',' $1 ',$m[2]));
+        $sql = strtolower(preg_replace('/(?<=[a-z0-9\b])(Or|And)(?=[A-Z])/', ' $1 ', $m[2]));
 
         // add parameter binds
-        return preg_replace_callback('/\b([\w-]+)\b/', function($m) {
+        return preg_replace_callback('/\b([\w-]+)\b/', function ($m) {
             return ($m[0] != 'or' && $m[0] != 'and') ? "`{$m[0]}`=?" : $m[0];
         }, $sql);
     }

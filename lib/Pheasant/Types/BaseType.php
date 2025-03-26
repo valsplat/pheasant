@@ -2,25 +2,25 @@
 
 namespace Pheasant\Types;
 
-use \Pheasant\Options;
+use Pheasant\Options;
 
 /**
- * An abstract type base class
+ * An abstract type base class.
  */
 abstract class BaseType implements \Pheasant\Type
 {
     private $_options;
 
     /**
-     * Constructor
+     * Constructor.
      */
-    public function __construct($options=null)
+    public function __construct($options = null)
     {
         $this->_options = Options::coerce($options);
     }
 
     /**
-     * Gets the {@link Options} object associated with the type
+     * Gets the {@link Options} object associated with the type.
      */
     public function options()
     {

@@ -3,21 +3,20 @@
 namespace Pheasant\Database\Mysqli;
 
 /**
- * A mysql transaction
+ * A mysql transaction.
  */
 class Transaction
 {
-    private
-        $_connection,
-        $_events
-        ;
+    private $_connection;
+    private $_events
+    ;
 
     public $results;
 
     /**
-     * Constructor
+     * Constructor.
      */
-    public function __construct($connection=null)
+    public function __construct($connection = null)
     {
         $this->_connection = $connection ?: \Pheasant::instance()->connection();
         $this->_events = new \Pheasant\Events();
@@ -25,7 +24,7 @@ class Transaction
 
     public function execute()
     {
-        $this->results = array();
+        $this->results = [];
 
         try {
             $this->_connection->execute('BEGIN');
@@ -42,24 +41,26 @@ class Transaction
     }
 
     /**
-     * Adds a callback that gets passed any extra varargs as a arguments
+     * Adds a callback that gets passed any extra varargs as a arguments.
+     *
      * @chainable
      */
     public function callback($callback)
     {
         $t = $this;
-        $args = array_slice(func_get_args(),1);
+        $args = array_slice(func_get_args(), 1);
 
         // use an event handler to dispatch to the callback
-        $this->_events->register('startTransaction', function($event, $connection) use ($t, $callback, $args) {
-            $t->results []= call_user_func_array($callback, $args);
+        $this->_events->register('startTransaction', function ($event, $connection) use ($t, $callback, $args) {
+            $t->results[] = call_user_func_array($callback, $args);
         });
 
         return $this;
     }
 
     /**
-     * Get the events object
+     * Get the events object.
+     *
      * @return Events
      */
     public function events()
@@ -68,34 +69,38 @@ class Transaction
     }
 
     /**
-     * Links another Events object such that events in it are corked until either commit/rollback and then uncorked
+     * Links another Events object such that events in it are corked until either commit/rollback and then uncorked.
+     *
      * @chainable
      */
     public function deferEvents($events)
     {
         $this->_events
-            ->register('startTransaction', function() use ($events) {
+            ->register('startTransaction', function () use ($events) {
                 $events->cork();
             })
-            ->register('commitTransaction', function() use ($events) {
+            ->register('commitTransaction', function () use ($events) {
                 $events->uncork();
             })
-            ->register('rollbackTransaction', function() use ($events) {
+            ->register('rollbackTransaction', function () use ($events) {
                 $events->discard()->uncork();
             })
-            ;
+        ;
     }
+
     /**
-     * Creates a transaction and optionally execute a transaction
+     * Creates a transaction and optionally execute a transaction.
+     *
      * @return Transaction
-    */
-    public static function create($closure, $execute=true)
+     */
+    public static function create($closure, $execute = true)
     {
         $transaction = new self();
         $transaction->callback($closure);
 
-        if($execute)
+        if ($execute) {
             $transaction->execute();
+        }
 
         return $transaction;
     }

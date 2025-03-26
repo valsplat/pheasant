@@ -3,13 +3,13 @@
 namespace Pheasant\Query;
 
 /**
- * A helper for querying a table by criteria
+ * A helper for querying a table by criteria.
  */
 class TableCriteria extends Criteria
 {
     private $_table;
 
-    public function __construct($table, $where, $params=array())
+    public function __construct($table, $where, $params = [])
     {
         parent::__construct($where, $params);
         $this->_table = $table;

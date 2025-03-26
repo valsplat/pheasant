@@ -3,22 +3,24 @@
 namespace Pheasant\Database;
 
 /**
- * Manages named connections
+ * Manages named connections.
  */
 class ConnectionManager
 {
-    private $_connections=array();
-    private $_drivers=array();
+    private $_connections = [];
+    private $_drivers = [];
     private $_default;
 
     /**
-     * Adds a named connection, with a string dsn
+     * Adds a named connection, with a string dsn.
+     *
      * @chainable
      */
     public function addConnection($name, $dsn)
     {
-        if(isset($this->_connections[$name]))
+        if (isset($this->_connections[$name])) {
             throw new \Pheasant\Exception("Connection $name already exists");
+        }
 
         $this->_connections[$name] = $dsn;
 
@@ -26,7 +28,8 @@ class ConnectionManager
     }
 
     /**
-     * Sets what connection name is used when 'default' is looked up
+     * Sets what connection name is used when 'default' is looked up.
+     *
      * @chainable
      */
     public function changeDefault($default)
@@ -37,28 +40,31 @@ class ConnectionManager
     }
 
     /**
-     * Returns a connection
+     * Returns a connection.
      */
     public function connection($name)
     {
-        if ($name == 'default' && isset($this->_default))
+        if ($name == 'default' && isset($this->_default)) {
             $name = $this->_default;
+        }
 
-        if(!isset($this->_connections[$name]))
+        if (!isset($this->_connections[$name])) {
             throw new \Pheasant\Exception("No connection called $name registered");
+        }
 
         $connection = $this->_connections[$name];
 
         // lazily build the connection
-        if(is_string($connection))
+        if (is_string($connection)) {
             $connection = $this->_connections[$name] =
                 $this->_buildConnection(new Dsn($connection));
+        }
 
         return $connection;
     }
 
     /**
-     * Clears connections
+     * Clears connections.
      */
     public function clear()
     {
@@ -68,7 +74,7 @@ class ConnectionManager
     }
 
     /**
-     * Adds a connection class to use for a specific scheme
+     * Adds a connection class to use for a specific scheme.
      */
     public function addDriver($scheme, $class)
     {
@@ -78,7 +84,8 @@ class ConnectionManager
     }
 
     /**
-     * Builds a connection object for a given Dsn
+     * Builds a connection object for a given Dsn.
+     *
      * @return Connection
      */
     private function _buildConnection(Dsn $dsn)

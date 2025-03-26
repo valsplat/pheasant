@@ -2,8 +2,8 @@
 
 namespace Pheasant\Relationships;
 
-use \Pheasant\Collection;
-use \Pheasant\Relationship;
+use Pheasant\Collection;
+use Pheasant\Relationship;
 
 /**
  * A HasMany relationship represents a 1 to N relationship.
@@ -11,9 +11,9 @@ use \Pheasant\Relationship;
 class HasMany extends Relationship
 {
     /**
-     * Constructor
+     * Constructor.
      */
-    public function __construct($class, $local, $foreign=null)
+    public function __construct($class, $local, $foreign = null)
     {
         parent::__construct($class, $local, $foreign);
     }
@@ -21,7 +21,7 @@ class HasMany extends Relationship
     /* (non-phpdoc)
      * @see Relationship::get()
      */
-    public function get($object, $key, $cache=null)
+    public function get($object, $key, $cache = null)
     {
         $query = $this->query(
             "{$this->foreign}=?", $object->get($this->local));
@@ -36,8 +36,9 @@ class HasMany extends Relationship
     {
         $newValue = $object->{$this->local};
 
-        if($newValue instanceof PropertyReference)
+        if ($newValue instanceof PropertyReference) {
             $value->saveAfter($object);
+        }
 
         $value->set($this->foreign, $newValue);
     }

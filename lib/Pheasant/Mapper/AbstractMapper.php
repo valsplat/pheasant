@@ -3,7 +3,7 @@
 namespace Pheasant\Mapper;
 
 /**
- * A generic mapper object that provides infrastructure for other mappers
+ * A generic mapper object that provides infrastructure for other mappers.
  */
 abstract class AbstractMapper implements Mapper
 {
@@ -20,16 +20,16 @@ abstract class AbstractMapper implements Mapper
 
     protected function insert($object)
     {
-        throw new \BadMethodCallException(__FUNCTION__." not implemented");
+        throw new \BadMethodCallException(__FUNCTION__ . ' not implemented');
     }
 
     protected function update($object, $changes)
     {
-        throw new \BadMethodCallException(__FUNCTION__." not implemented");
+        throw new \BadMethodCallException(__FUNCTION__ . ' not implemented');
     }
 
     public function delete($object)
     {
-        throw new \BadMethodCallException(__FUNCTION__." not implemented");
+        throw new \BadMethodCallException(__FUNCTION__ . ' not implemented');
     }
 }

@@ -3,7 +3,7 @@
 namespace Pheasant\Types;
 
 /**
- * A big integer type
+ * A big integer type.
  */
 class BigIntegerType extends IntegerType
 {
@@ -12,7 +12,7 @@ class BigIntegerType extends IntegerType
      */
     public function columnSql($column, $platform)
     {
-        $type = $this->width ? "bigint({$this->width})" : "bigint";
+        $type = $this->width ? "bigint({$this->width})" : 'bigint';
 
         return $platform->columnSql($column, $type, $this->options());
     }

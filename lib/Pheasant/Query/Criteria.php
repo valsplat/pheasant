@@ -2,30 +2,31 @@
 
 namespace Pheasant\Query;
 
-use \Pheasant;
-use \Pheasant\Database\Binder;
+use Pheasant\Database\Binder;
 
 /**
  * A builder object for simple sql where clauses. Magic is used to
- * provide chainable and() and or() methods for adding clauses
+ * provide chainable and() and or() methods for adding clauses.
  */
 class Criteria
 {
-    private $_sql='';
+    private $_sql = '';
 
     /**
-     * Constructor
-     * @param $where either a query string, or a key=>val array
+     * Constructor.
+     *
+     * @param $where  either a query string, or a key=>val array
      * @param $params mixed, parameters to bind into the query string
      */
-    public function __construct($where=null, $params=array())
+    public function __construct($where = null, $params = [])
     {
         if (is_object($where)) {
             $this->_sql = $where->toSql(false);
         } elseif (is_array($where)) {
-            $conditions = array();
-            foreach($where as $key=>$val)
-                $conditions [] = $this->bind('`'.$key.'`'.'=?', array($val));
+            $conditions = [];
+            foreach ($where as $key => $val) {
+                $conditions[] = $this->bind('`' . $key . '`=?', [$val]);
+            }
 
             $this->_sql = implode(' AND ', $conditions);
         } elseif (!empty($where)) {
@@ -34,10 +35,11 @@ class Criteria
     }
 
     /**
-     * Binds an array of parameters into a string
+     * Binds an array of parameters into a string.
+     *
      * @return string
      */
-    public function bind($sql, $params=array())
+    public function bind($sql, $params = [])
     {
         $binder = new Binder();
 
@@ -45,15 +47,15 @@ class Criteria
     }
 
     /**
-     * Returns the sql representation of the where clause
+     * Returns the sql representation of the where clause.
      */
-    public function toSql($braces=true)
+    public function toSql($braces = true)
     {
         return $braces ? "({$this->_sql})" : $this->_sql;
     }
 
     /**
-     * Returns whether the criteria is empty
+     * Returns whether the criteria is empty.
      */
     public function isEmpty()
     {
@@ -66,17 +68,19 @@ class Criteria
     }
 
     /**
-     * Triggers either the and() or or() methods
+     * Triggers either the and() or or() methods.
      */
     public function __call($method, $params)
     {
         $method = strtoupper($method);
 
-        if($method != 'AND' && $method != 'OR')
+        if ($method != 'AND' && $method != 'OR') {
             throw new \BadMethodCallException("Unknown method $method");
+        }
 
-        if(!empty($this->_sql))
+        if (!empty($this->_sql)) {
             $this->_sql = "($this->_sql) $method ";
+        }
 
         $this->_sql .= implode(" $method ", $params);
 
@@ -84,7 +88,8 @@ class Criteria
     }
 
     /**
-     * Joins all parameters together with AND
+     * Joins all parameters together with AND.
+     *
      * @return Criteria
      */
     public static function concatAnd()
@@ -93,7 +98,8 @@ class Criteria
     }
 
     /**
-     * Joins all parameters together with OR
+     * Joins all parameters together with OR.
+     *
      * @return Criteria
      */
     public static function concatOr()

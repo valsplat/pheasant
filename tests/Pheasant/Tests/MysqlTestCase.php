@@ -2,7 +2,7 @@
 
 namespace Pheasant\Tests;
 
-use \PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class MysqlTestCase extends TestCase
 {
@@ -19,7 +19,7 @@ class MysqlTestCase extends TestCase
             ->sequencePool()
             ->initialize()
             ->clear()
-            ;
+        ;
     }
 
     public function tearDown()
@@ -34,7 +34,7 @@ class MysqlTestCase extends TestCase
     }
 
     // Helper to initialize a domain object
-    public function initialize($class, $callback=null)
+    public function initialize($class, $callback = null)
     {
         return $this->pheasant->initialize($class, $callback);
     }
@@ -44,7 +44,9 @@ class MysqlTestCase extends TestCase
     {
         $table = $this->pheasant->connection()->table($name);
 
-        if($table->exists()) $table->drop();
+        if ($table->exists()) {
+            $table->drop();
+        }
 
         $table->create($columns);
 
@@ -71,8 +73,9 @@ class MysqlTestCase extends TestCase
 
     public function assertRowCount($count, $sql)
     {
-        if(is_object($sql))
+        if (is_object($sql)) {
             $sql = $sql->toSql();
+        }
 
         $result = $this->connection()->execute($sql);
         $this->assertEquals($result->count(), $count);

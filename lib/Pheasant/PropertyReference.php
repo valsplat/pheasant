@@ -9,12 +9,11 @@ namespace Pheasant;
  */
 class PropertyReference
 {
-    private
-        $_property,
-        $_object;
+    private $_property;
+    private $_object;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct($property, $object)
     {
@@ -23,7 +22,7 @@ class PropertyReference
     }
 
     /**
-     * Returns the value
+     * Returns the value.
      */
     public function value()
     {
@@ -31,7 +30,7 @@ class PropertyReference
     }
 
     /**
-     * Returns a string version of {@link value()}
+     * Returns a string version of {@link value()}.
      */
     public function __toString()
     {
@@ -39,7 +38,8 @@ class PropertyReference
     }
 
     /**
-     * Saves the internal object
+     * Saves the internal object.
+     *
      * @chainable
      */
     public function save()

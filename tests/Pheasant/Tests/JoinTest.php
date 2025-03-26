@@ -6,7 +6,7 @@ use Pheasant\Tests\Examples\Hero;
 use Pheasant\Tests\Examples\Power;
 use Pheasant\Tests\Examples\SecretIdentity;
 
-class JoinTest extends \Pheasant\Tests\MysqlTestCase
+class JoinTest extends MysqlTestCase
 {
     public function setUp()
     {
@@ -17,7 +17,7 @@ class JoinTest extends \Pheasant\Tests\MysqlTestCase
             ->create('hero', Hero::schema())
             ->create('power', Power::schema())
             ->create('secretidentity', SecretIdentity::schema())
-            ;
+        ;
 
         $this->spiderman = Hero::createHelper('Spider Man', 'Peter Parker', [
             'Super-human Strength', 'Spider Senses',
@@ -75,7 +75,7 @@ class JoinTest extends \Pheasant\Tests\MysqlTestCase
         $collection = Hero::all()
             ->join(['Powers', 'SecretIdentity'])
             ->filter('SecretIdentity.realname = ?', 'Peter Parker')
-            ;
+        ;
 
         $this->assertCount(1 * 2, $collection);
         $this->assertEquals('Spider Man', $collection[0]->alias);
@@ -86,7 +86,7 @@ class JoinTest extends \Pheasant\Tests\MysqlTestCase
         $collection = Power::all()
             ->join(['Hero' => ['SecretIdentity' => ['Hero h2']]])
             ->filter('SecretIdentity.realname = ?', 'Peter Parker')
-            ;
+        ;
 
         $this->assertCount(2, $collection);
         $this->assertEquals('Super-human Strength', $collection[0]->description);

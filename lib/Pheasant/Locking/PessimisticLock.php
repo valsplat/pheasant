@@ -3,23 +3,24 @@
 namespace Pheasant\Locking;
 
 /**
- * A blocking row-lock on an object
+ * A blocking row-lock on an object.
  */
 class PessimisticLock
 {
     private $_object;
 
     /**
-     * Constructor
+     * Constructor.
      */
-    public function __construct($object, $clause=null)
+    public function __construct($object, $clause = null)
     {
         $this->_object = $object;
         $this->_clause = $clause;
     }
 
     /**
-     * Acquire the lock on the object
+     * Acquire the lock on the object.
+     *
      * @return object the reloaded object
      */
     public function acquire()
@@ -34,6 +35,6 @@ class PessimisticLock
             ->find($this->_object->className(), $this->_object->identity()->toCriteria())
             ->lock($this->_clause)
             ->one()
-            ;
+        ;
     }
 }

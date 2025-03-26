@@ -6,7 +6,7 @@ use Pheasant\Tests\Examples\Hero;
 use Pheasant\Tests\Examples\Power;
 use Pheasant\Tests\Examples\SecretIdentity;
 
-class RelationshipTest extends \Pheasant\Tests\MysqlTestCase
+class RelationshipTest extends MysqlTestCase
 {
     public function setUp()
     {
@@ -17,7 +17,7 @@ class RelationshipTest extends \Pheasant\Tests\MysqlTestCase
             ->create('hero', Hero::schema())
             ->create('power', Power::schema())
             ->create('secretidentity', SecretIdentity::schema())
-            ;
+        ;
     }
 
     public function testOneToManyViaPropertySetting()

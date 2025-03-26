@@ -2,10 +2,10 @@
 
 namespace Pheasant\Types;
 
-use \Pheasant\Database\TypedValue;
+use Pheasant\Database\TypedValue;
 
 /**
- * A date and time type that persists to a unix timestamp
+ * A date and time type that persists to a unix timestamp.
  */
 class UnixTimestampType extends BaseType
 {
@@ -22,7 +22,7 @@ class UnixTimestampType extends BaseType
      */
     public function unmarshal($value)
     {
-        return new \DateTime('@'.$value);
+        return new \DateTime('@' . $value);
     }
 
     /* (non-phpdoc)

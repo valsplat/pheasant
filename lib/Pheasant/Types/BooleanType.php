@@ -2,10 +2,10 @@
 
 namespace Pheasant\Types;
 
-use \Pheasant\Database\TypedValue;
+use Pheasant\Database\TypedValue;
 
 /**
- * A basic string type
+ * A basic string type.
  */
 class BooleanType extends BaseType
 {
@@ -14,7 +14,7 @@ class BooleanType extends BaseType
      */
     public function columnSql($column, $platform)
     {
-        return $platform->columnSql($column, "boolean", $this->options());
+        return $platform->columnSql($column, 'boolean', $this->options());
     }
 
     /* (non-phpdoc)
@@ -30,6 +30,6 @@ class BooleanType extends BaseType
      */
     public function marshal($value)
     {
-        return new TypedValue((bool)$value);
+        return new TypedValue((bool) $value);
     }
 }

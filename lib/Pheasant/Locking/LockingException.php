@@ -2,4 +2,6 @@
 
 namespace Pheasant\Locking;
 
-class LockingException extends \Pheasant\Exception {}
+class LockingException extends \Pheasant\Exception
+{
+}

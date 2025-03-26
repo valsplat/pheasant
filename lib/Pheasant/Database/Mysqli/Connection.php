@@ -24,12 +24,12 @@ class Connection
     private $_strict;
     private $_selectedDatabase;
     private $_debug = false
-        ;
+    ;
 
     public static $counter = 0;
     public static $timer = 0;
     public static $queries = []
-        ;
+    ;
 
     /**
      * Constructor.
@@ -177,7 +177,7 @@ class Connection
 
         // delegate execution to the filter chain
         return $this->_filter->execute($sql, function ($sql) use ($mysqli, $debug) {
-            ++\Pheasant\Database\Mysqli\Connection::$counter;
+            ++Connection::$counter;
 
             if ($debug) {
                 $timer = microtime(true);
@@ -186,8 +186,8 @@ class Connection
             $r = $mysqli->query($sql, MYSQLI_STORE_RESULT);
 
             if ($debug) {
-                \Pheasant\Database\Mysqli\Connection::$timer += microtime(true) - $timer;
-                \Pheasant\Database\Mysqli\Connection::$queries[] = [
+                Connection::$timer += microtime(true) - $timer;
+                Connection::$queries[] = [
                     'sql' => $sql,
                     'thread' => $mysqli->thread_id,
                     'time' => (microtime(true) - $timer) * 1000,

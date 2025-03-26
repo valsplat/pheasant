@@ -2,13 +2,13 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant\Database\Dsn;
+use Pheasant\Database\Dsn;
 
-class DsnTest extends \Pheasant\Tests\MysqlTestCase
+class DsnTest extends MysqlTestCase
 {
     public function testParsingADsn()
     {
-        $dsn = new Dsn("mysqli://user:pass@hostname:3306/mydb");
+        $dsn = new Dsn('mysqli://user:pass@hostname:3306/mydb');
 
         $this->assertEquals($dsn->scheme, 'mysqli');
         $this->assertEquals($dsn->user, 'user');
@@ -20,7 +20,7 @@ class DsnTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testBuildingADsn()
     {
-        $dsn = new Dsn("mysqli://user:pass@hostname:3306/mydb");
+        $dsn = new Dsn('mysqli://user:pass@hostname:3306/mydb');
         $dsn->host = 'anotherhost';
         $dsn->port = 3307;
 
@@ -29,7 +29,7 @@ class DsnTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testBuildingADsnWithoutDb()
     {
-        $dsn = new Dsn("mysqli://user:pass@hostname:3306");
+        $dsn = new Dsn('mysqli://user:pass@hostname:3306');
 
         $this->assertFalse(isset($dsn->database));
         $this->assertEquals($dsn->__toString(), 'mysqli://user:pass@hostname:3306');
@@ -37,12 +37,11 @@ class DsnTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testBuildingADsnWithQueryStrings()
     {
-        $raw = "mysqli://user:pass@hostname:3306?myparam=llamas&another=blargh";
+        $raw = 'mysqli://user:pass@hostname:3306?myparam=llamas&another=blargh';
         $dsn = new Dsn($raw);
 
         $this->assertEquals($dsn->params['another'], 'blargh');
         $this->assertEquals($dsn->params['myparam'], 'llamas');
         $this->assertEquals($dsn->__toString(), $raw);
     }
-
 }

@@ -2,16 +2,16 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant\Database\FilterChain;
+use Pheasant\Database\FilterChain;
 
-class FilterChainTest extends \Pheasant\Tests\MysqlTestCase
+class FilterChainTest extends MysqlTestCase
 {
     public function tearDown()
     {
         parent::tearDown();
         \Mockery::close();
     }
-    
+
     public function testFilteringQuery()
     {
         $connection = \Mockery::mock('\Pheasant\Database\Mysqli\Connection');
@@ -21,11 +21,11 @@ class FilterChainTest extends \Pheasant\Tests\MysqlTestCase
             ->once();
 
         $filter = new FilterChain();
-        $filter->onQuery(function($sql) {
+        $filter->onQuery(function ($sql) {
             return 'SELECT llamas FROM animals';
         });
 
-        $filter->execute('SELECT 1', function($sql) use ($connection) {
+        $filter->execute('SELECT 1', function ($sql) use ($connection) {
             $connection->execute($sql);
         });
 
@@ -38,10 +38,10 @@ class FilterChainTest extends \Pheasant\Tests\MysqlTestCase
         $result = \Mockery::mock('\Pheasant\Database\Mysqli\ResultSet');
 
         $filter = new FilterChain();
-        $results = array();
+        $results = [];
 
-        $filter->onResult(function($sql, $result, $time) use (&$results) {
-            $results []= func_get_args();
+        $filter->onResult(function ($sql, $result, $time) use (&$results) {
+            $results[] = func_get_args();
         });
 
         $connection
@@ -50,7 +50,7 @@ class FilterChainTest extends \Pheasant\Tests\MysqlTestCase
             ->andReturn($result)
             ->once();
 
-        $filter->execute('SELECT 1', function($sql) use ($connection) {
+        $filter->execute('SELECT 1', function ($sql) use ($connection) {
             return $connection->execute($sql);
         });
 
@@ -65,19 +65,19 @@ class FilterChainTest extends \Pheasant\Tests\MysqlTestCase
         $connection = \Mockery::mock('\Pheasant\Database\Mysqli\Connection');
 
         $filter = new FilterChain();
-        $exceptions = array();
+        $exceptions = [];
 
-        $filter->onError(function($e) use (&$exceptions) {
-            $exceptions []= $e;
+        $filter->onError(function ($e) use (&$exceptions) {
+            $exceptions[] = $e;
         });
 
         $connection
             ->shouldReceive('execute')
             ->andThrow(new \Exception('Eeeeek!'))
-            ;
+        ;
 
         try {
-            $filter->execute('SELECT 1', function($sql) use ($connection) {
+            $filter->execute('SELECT 1', function ($sql) use ($connection) {
                 $connection->execute($sql);
             });
 

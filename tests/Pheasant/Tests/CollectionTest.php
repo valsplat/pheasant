@@ -2,11 +2,9 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant\Collection;
-use \Pheasant\Query\Query;
-use \Pheasant\Tests\Examples\Animal;
+use Pheasant\Tests\Examples\Animal;
 
-class CollectionTest extends \Pheasant\Tests\MysqlTestCase
+class CollectionTest extends MysqlTestCase
 {
     public function setUp()
     {
@@ -15,18 +13,18 @@ class CollectionTest extends \Pheasant\Tests\MysqlTestCase
         $migrator = new \Pheasant\Migrate\Migrator();
         $migrator
             ->create('animal', Animal::schema())
-            ;
+        ;
 
-        Animal::import(array(
-            array('name'=>'Llama', 'type'=>'llama'),
-            array('name'=>'Blue Frog', 'type'=>'frog'),
-            array('name'=>'Red Frog', 'type'=>'frog'),
-        ));
+        Animal::import([
+            ['name' => 'Llama', 'type' => 'llama'],
+            ['name' => 'Blue Frog', 'type' => 'frog'],
+            ['name' => 'Red Frog', 'type' => 'frog'],
+        ]);
     }
 
     public function testIteratingEmpty()
     {
-        foreach(Animal::find('type=?','mongoose') as $animal) {
+        foreach (Animal::find('type=?', 'mongoose') as $animal) {
         }
 
         $this->assertTrue(true);
@@ -82,10 +80,10 @@ class CollectionTest extends \Pheasant\Tests\MysqlTestCase
     public function testSelectColumn()
     {
         $results = Animal::find()->select('type')->column('type')->toArray();
-        $this->assertEquals(array('llama','frog','frog'), $results);
+        $this->assertEquals(['llama', 'frog', 'frog'], $results);
 
         $results = Animal::find()->select('type')->column('type')->unique();
-        $this->assertEquals(array('llama','frog'), $results);
+        $this->assertEquals(['llama', 'frog'], $results);
     }
 
     public function testOrCreate()
@@ -93,9 +91,9 @@ class CollectionTest extends \Pheasant\Tests\MysqlTestCase
         $results = Animal::find('name=?', 'Orangutan');
         $this->assertCount(0, $results);
 
-        $results = Animal::find('name=?', 'Orangutan')->orCreate(array(
-            'name' => 'Orangutan', 'type'=>'primate'
-        ));
+        $results = Animal::find('name=?', 'Orangutan')->orCreate([
+            'name' => 'Orangutan', 'type' => 'primate',
+        ]);
         $this->assertCount(1, $results);
         $this->assertEquals('Orangutan', $results->one()->name);
     }
@@ -128,7 +126,7 @@ class CollectionTest extends \Pheasant\Tests\MysqlTestCase
     {
         $animals = Animal::all()->filter('type="frog"');
 
-        foreach($animals as $animal) {
+        foreach ($animals as $animal) {
             $animal->type = 'Test';
             $animal->save();
         }
@@ -138,8 +136,8 @@ class CollectionTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testSaving()
     {
-        Animal::all()->save(function($animal) {
-            if($animal->type == 'frog') {
+        Animal::all()->save(function ($animal) {
+            if ($animal->type == 'frog') {
                 $animal->type = 'tadpole';
             }
         });

@@ -2,4 +2,6 @@
 
 namespace Pheasant;
 
-class ConstraintException extends Exception {};
+class ConstraintException extends Exception
+{
+}

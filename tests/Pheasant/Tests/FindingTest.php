@@ -6,7 +6,7 @@ use Pheasant\Query\Criteria;
 use Pheasant\Tests\Examples\User;
 use Pheasant\Tests\Examples\UserPref;
 
-class FindingTest extends \Pheasant\Tests\MysqlTestCase
+class FindingTest extends MysqlTestCase
 {
     public function setUp()
     {
@@ -16,7 +16,7 @@ class FindingTest extends \Pheasant\Tests\MysqlTestCase
         $migrator
             ->create('user', User::schema())
             ->create('userpref', UserPref::schema())
-            ;
+        ;
 
         // create some users
         $this->users = User::import([
@@ -140,12 +140,12 @@ class FindingTest extends \Pheasant\Tests\MysqlTestCase
     {
         User::import([
             ['firstname' => 'Frank', 'lastname' => 'Beechworth'],
-            ]);
+        ]);
 
         $users = User::find()
             ->filter('firstname like ?', 'Fra%')
             ->filter('lastname in (?)', 'Castle')
-            ;
+        ;
 
         $this->assertEquals(count($users), 1);
         $this->assertEquals($users[0]->firstname, 'Frank');

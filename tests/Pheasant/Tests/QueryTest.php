@@ -2,10 +2,9 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant;
-use \Pheasant\Query\Query;
+use Pheasant\Query\Query;
 
-class QueryTest extends \Pheasant\Tests\MysqlTestCase
+class QueryTest extends MysqlTestCase
 {
     public function testQuerying()
     {
@@ -13,8 +12,8 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
         $query
             ->select('firstname')
             ->from('user')
-            ->where('lastname=?','Castle')
-            ;
+            ->where('lastname=?', 'Castle')
+        ;
 
         $this->assertEquals(
             "SELECT firstname FROM user WHERE (lastname='Castle')",
@@ -28,9 +27,9 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
         $query
             ->select('firstname')
             ->from('user')
-            ->where('lastname=?','Castle')
-            ->andWhere('firstname=?','Frank')
-            ;
+            ->where('lastname=?', 'Castle')
+            ->andWhere('firstname=?', 'Frank')
+        ;
 
         $this->assertEquals(
             "SELECT firstname FROM user WHERE ((lastname='Castle') AND (firstname='Frank'))",
@@ -45,13 +44,13 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
         $query
             ->from('user')
             ->innerJoin('mytable', 'using(tableid)')
-            ->where('userid=?',55)
-            ;
+            ->where('userid=?', 55)
+        ;
 
         $this->assertEquals(
             "SELECT * FROM user INNER JOIN `mytable` using(tableid) WHERE (userid='55')",
             $query->toSql()
-            );
+        );
     }
 
     public function testInnerJoinOnObjects()
@@ -61,7 +60,7 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
         $innerQuery
             ->select('groupname', 'groupid')
             ->from('group')
-            ;
+        ;
 
         // outer query
         $query = new Query();
@@ -69,17 +68,17 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
             ->select('firstname')
             ->from('user')
             ->innerJoin($innerQuery, 'USING(groupid)')
-            ->where('lastname=?','Castle')
-            ;
+            ->where('lastname=?', 'Castle')
+        ;
 
         $innerQuery
             ->where('derived.firstname = ?', 'frank');
 
-        $this->assertEquals('SELECT firstname FROM user '.
-            'INNER JOIN (SELECT groupname, groupid FROM group) derived USING(groupid) '.
+        $this->assertEquals('SELECT firstname FROM user ' .
+            'INNER JOIN (SELECT groupname, groupid FROM group) derived USING(groupid) ' .
             'WHERE (lastname=\'Castle\')',
             $query->toSql()
-            );
+        );
     }
 
     public function testAddingGroupBy()
@@ -89,7 +88,7 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
             ->select('userid')
             ->from('user')
             ->groupBy('userid')
-            ;
+        ;
 
         $this->assertEquals(
             'SELECT userid FROM user GROUP BY userid',
@@ -103,13 +102,13 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
             ->select('userid')
             ->from('user')
             ->having('userid < ?', 100)
-            ;
+        ;
 
         $this->assertEquals(
             "SELECT userid FROM user HAVING (userid < '100')",
             $query->toSql());
     }
-    
+
     public function testAddingOrderBy()
     {
         $query = new Query();
@@ -117,7 +116,7 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
             ->select('userid')
             ->from('user')
             ->orderBy('userid')
-            ;
+        ;
 
         $this->assertEquals(
             'SELECT userid FROM user ORDER BY userid',
@@ -129,7 +128,7 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
             ->from('bar')
             ->orderBy('baz')
             ->andOrderBy('moo')
-            ;
+        ;
 
         $this->assertEquals(
             'SELECT foo FROM bar ORDER BY baz, moo',
@@ -144,7 +143,7 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
             ->from('users')
             ->orderBy('last_name ASC')
             ->orderBy('first_name')
-            ;
+        ;
 
         $this->assertEquals(
             'SELECT first_name, last_name FROM users ORDER BY first_name',
@@ -158,7 +157,7 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
             ->select('userid')
             ->from('user')
             ->lock()
-            ;
+        ;
 
         $this->assertEquals(
             'SELECT userid FROM user FOR UPDATE',
@@ -172,7 +171,7 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
             ->select('userid')
             ->from('user')
             ->lock('LOCK IN SHARE MODE')
-            ;
+        ;
 
         $this->assertEquals(
             'SELECT userid FROM user LOCK IN SHARE MODE',
@@ -186,7 +185,7 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
             ->distinct()
             ->select('userid')
             ->from('user')
-            ;
+        ;
 
         $this->assertEquals(
             'SELECT DISTINCT userid FROM user',
@@ -199,8 +198,8 @@ class QueryTest extends \Pheasant\Tests\MysqlTestCase
         $query
             ->select('firstname')
             ->from('user')
-            ->where('lastname=?','Castle')
-            ;
+            ->where('lastname=?', 'Castle')
+        ;
         $this->assertSame(1, $query->count());
     }
 }

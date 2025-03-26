@@ -2,9 +2,9 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant\Types;
+use Pheasant\Types;
 
-class TypesTest extends \Pheasant\Tests\MysqlTestCase
+class TypesTest extends MysqlTestCase
 {
     public function testInteger()
     {
@@ -65,7 +65,6 @@ class TypesTest extends \Pheasant\Tests\MysqlTestCase
         $this->assertMysqlColumnSql('`test` char(4)', $type);
     }
 
-
     public function testString()
     {
         $type = new Types\StringType(255);
@@ -79,7 +78,6 @@ class TypesTest extends \Pheasant\Tests\MysqlTestCase
 
         $type = new Types\StringType(100000000);
         $this->assertMysqlColumnSql('`test` longtext', $type);
-
 
         $type = new Types\StringType(65000, 'required');
         $this->assertMysqlColumnSql('`test` text not null', $type);
@@ -96,10 +94,10 @@ class TypesTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testSet()
     {
-        $type = new Types\SetType(array('foo', 'bar'));
+        $type = new Types\SetType(['foo', 'bar']);
         $this->assertMysqlColumnSql("`test` set('foo','bar')", $type);
 
-        $type = new Types\SetType(array('foo', 'bar'), 'notnull');
+        $type = new Types\SetType(['foo', 'bar'], 'notnull');
         $this->assertMysqlColumnSql("`test` set('foo','bar') not null", $type);
     }
 
@@ -107,7 +105,7 @@ class TypesTest extends \Pheasant\Tests\MysqlTestCase
     {
         $this->assertEquals($type->columnSql('test', new \Pheasant\Database\MysqlPlatform()), $sql);
     }
-    
+
     public function testJson()
     {
         $type = new Types\JsonType();

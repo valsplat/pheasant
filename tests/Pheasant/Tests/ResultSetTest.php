@@ -4,7 +4,7 @@ namespace Pheasant\Tests;
 
 use Pheasant\Types;
 
-class ResultSetTest extends \Pheasant\Tests\MysqlTestCase
+class ResultSetTest extends MysqlTestCase
 {
     public function setUp()
     {

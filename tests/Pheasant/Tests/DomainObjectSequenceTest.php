@@ -2,20 +2,20 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant\Types\SequenceType;
-use \Pheasant\Types\StringType;
-use \Pheasant\Tests\Examples\Person;
+use Pheasant\Tests\Examples\Person;
+use Pheasant\Types\SequenceType;
+use Pheasant\Types\StringType;
 
-class DomainObjectSequenceTest extends \Pheasant\Tests\MysqlTestCase
+class DomainObjectSequenceTest extends MysqlTestCase
 {
     public function setUp()
     {
         parent::setUp();
 
-        $table = $this->table('person', array(
+        $table = $this->table('person', [
             'personid' => new SequenceType(),
             'name' => new StringType(),
-            ));
+        ]);
     }
 
     public function testSequencePrimaryKey()
@@ -25,11 +25,11 @@ class DomainObjectSequenceTest extends \Pheasant\Tests\MysqlTestCase
 
         $this->assertEquals(1, $person->personid);
 
-        $person->name = "Frank";
+        $person->name = 'Frank';
         $person->save();
 
         $this->assertEquals(1, $person->personid);
-        $this->assertEquals("Frank", $person->name);
+        $this->assertEquals('Frank', $person->name);
     }
 
     public function testSequenceFaileWhenManuallySet()

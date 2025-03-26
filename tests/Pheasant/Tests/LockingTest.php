@@ -2,9 +2,9 @@
 
 namespace Pheasant\Tests;
 
-use \Pheasant\Tests\Examples\Animal;
+use Pheasant\Tests\Examples\Animal;
 
-class LockingTest extends \Pheasant\Tests\MysqlTestCase
+class LockingTest extends MysqlTestCase
 {
     public function setUp()
     {
@@ -13,20 +13,21 @@ class LockingTest extends \Pheasant\Tests\MysqlTestCase
         $migrator = new \Pheasant\Migrate\Migrator();
         $migrator
             ->create('animal', Animal::schema())
-            ;
+        ;
 
-        $this->queries = array();
+        $this->queries = [];
         $test = $this;
-        $this->connection()->filterChain()->onQuery(function($sql) use($test) {
-            $test->queries []= $sql;
+        $this->connection()->filterChain()->onQuery(function ($sql) use ($test) {
+            $test->queries[] = $sql;
+
             return $sql;
         });
     }
 
     public function testLockingAnInstance()
     {
-        $animal = Animal::create(array('type'=>'Llama'));
-        $animal->transaction(function($animal) {
+        $animal = Animal::create(['type' => 'Llama']);
+        $animal->transaction(function ($animal) {
             $animal->lock();
         });
 
@@ -38,15 +39,15 @@ class LockingTest extends \Pheasant\Tests\MysqlTestCase
 
     public function testLockingAnInstanceCallsCallback()
     {
-        $animal = Animal::create(array('type'=>'Llama'));
+        $animal = Animal::create(['type' => 'Llama']);
         $object = new \stdClass();
         $object->called = false;
 
         // fudge the data in the background
         $this->connection()->execute('UPDATE animal SET type="walrus" WHERE id=1');
 
-        $animal->transaction(function($animal) use($object) {
-            $animal->lock(function($locked) use($object) {
+        $animal->transaction(function ($animal) use ($object) {
+            $animal->lock(function ($locked) use ($object) {
                 $object->called = true;
             });
         });
@@ -60,9 +61,8 @@ class LockingTest extends \Pheasant\Tests\MysqlTestCase
         $animal->type = 'llama';
 
         $this->expectException('\Pheasant\Locking\LockingException');
-        $animal->transaction(function($animal) {
+        $animal->transaction(function ($animal) {
             $animal->lock();
         });
     }
 }
-

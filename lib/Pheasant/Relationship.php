@@ -4,9 +4,11 @@ namespace Pheasant;
 
 class Relationship
 {
-    public $class, $local, $foreign;
+    public $class;
+    public $local;
+    public $foreign;
 
-    public function __construct($class, $local, $foreign=null)
+    public function __construct($class, $local, $foreign = null)
     {
         $this->class = $class;
         $this->local = $local;
@@ -15,35 +17,34 @@ class Relationship
 
     public function get($object, $key)
     {
-        throw new \BadMethodCallException(
-            "Get not supported on ".get_class($this));
+        throw new \BadMethodCallException('Get not supported on ' . get_class($this));
     }
 
     public function set($object, $key, $value)
     {
-        throw new \BadMethodCallException(
-            "Set not supported on ".get_class($this));
+        throw new \BadMethodCallException('Set not supported on ' . get_class($this));
     }
 
     public function add($object, $value)
     {
-        throw new \BadMethodCallException(
-            "Add not supported on ".get_class($this));
+        throw new \BadMethodCallException('Add not supported on ' . get_class($this));
     }
 
     /**
-     * Delegates to the finder for querying
+     * Delegates to the finder for querying.
+     *
      * @return Query
      */
     protected function query($sql, $params)
     {
         return \Pheasant::instance()->finderFor($this->class)
-            ->query(new \Pheasant\Query\Criteria($sql, $params))
-            ;
+            ->query(new Query\Criteria($sql, $params))
+        ;
     }
 
     /**
-     * Delegates to the schema for hydrating
+     * Delegates to the schema for hydrating.
+     *
      * @return DomainObject
      */
     protected function hydrate($row)
@@ -53,14 +54,15 @@ class Relationship
     }
 
     /**
-     * Helper function that creates a closure that calls the add function
+     * Helper function that creates a closure that calls the add function.
+     *
      * @return Closure
      */
     protected function adder($object)
     {
         $rel = $this;
 
-        return function($value) use ($object, $rel) {
+        return function ($value) use ($object, $rel) {
             return $rel->add($object, $value);
         };
     }
@@ -68,11 +70,11 @@ class Relationship
     // -------------------------------------
     // delegate double dispatch calls to type
 
-    public function getter($key, $cache=null)
+    public function getter($key, $cache = null)
     {
         $rel = $this;
 
-        return function($object) use ($key, $rel, $cache) {
+        return function ($object) use ($key, $rel, $cache) {
             return $rel->get($object, $key, $cache);
         };
     }
@@ -81,7 +83,7 @@ class Relationship
     {
         $rel = $this;
 
-        return function($object, $value) use ($key, $rel) {
+        return function ($object, $value) use ($key, $rel) {
             return $rel->set($object, $key, $value);
         };
     }
@@ -91,16 +93,17 @@ class Relationship
 
     /**
      * Takes either a flat array of relationships or a nested key=>value array and returns
-     * it as a nested format
+     * it as a nested format.
+     *
      * @return array
      */
     public static function normalizeMap($array)
     {
-        $nested = array();
+        $nested = [];
 
-        foreach ((array) $array as $key=>$value) {
+        foreach ((array) $array as $key => $value) {
             if (is_numeric($key)) {
-                $nested[$value] = array();
+                $nested[$value] = [];
             } else {
                 $nested[$key] = $value;
             }
@@ -112,11 +115,12 @@ class Relationship
     /**
      * Adds a join clause to the given query for the given schema and relationship. Optionally
      * takes a nested list of relationships that will be recursively joined as needed.
+     *
      * @return void
      */
-    public static function addJoin($query, $parentAlias, $schema, $relName, $nested=array(), $joinType='inner')
+    public static function addJoin($query, $parentAlias, $schema, $relName, $nested = [], $joinType = 'inner')
     {
-        if (!in_array($joinType, array('inner','left','right'))) {
+        if (!in_array($joinType, ['inner', 'left', 'right'])) {
             throw new \InvalidArgumentException("Unsupported join type: $joinType");
         }
 
@@ -129,30 +133,31 @@ class Relationship
         $remoteSchema = $instance->schema($rel->class);
         $remoteTable = $instance->mapperFor($rel->class)->table();
 
-        $joinMethod = $joinType.'Join';
+        $joinMethod = $joinType . 'Join';
         $query->$joinMethod($remoteTable->name()->table, sprintf(
             'ON `%s`.`%s`=`%s`.`%s`',
             $parentAlias,
             $rel->local,
             $alias,
             $rel->foreign
-            ),
+        ),
             $alias
         );
 
-        foreach (self::normalizeMap($nested) as $relName=>$nested) {
+        foreach (self::normalizeMap($nested) as $relName => $nested) {
             self::addJoin($query, $alias, $remoteSchema, $relName, $nested, $joinType);
         }
     }
 
     /**
-     * Parses `RelName r1` as array('RelName', 'r1') or `Relname` as array('RelName','RelName')
+     * Parses `RelName r1` as array('RelName', 'r1') or `Relname` as array('RelName','RelName').
+     *
      * @return array
      */
     public static function parseRelName($relName)
     {
         $parts = explode(' ', $relName, 2);
 
-        return isset($parts[1]) ? $parts : array($parts[0], $parts[0]);
+        return isset($parts[1]) ? $parts : [$parts[0], $parts[0]];
     }
 }

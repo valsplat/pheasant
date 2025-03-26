@@ -2,13 +2,12 @@
 
 namespace Pheasant\Tests;
 
-use Pheasant;
 use Pheasant\DomainObject;
 use Pheasant\Events;
 use Pheasant\Tests\Examples\EventTestObject;
 use Pheasant\Types;
 
-class EventsTest extends \Pheasant\Tests\MysqlTestCase
+class EventsTest extends MysqlTestCase
 {
     public function setUp()
     {
@@ -27,10 +26,10 @@ class EventsTest extends \Pheasant\Tests\MysqlTestCase
      */
     public function initialize($class, $callback = null)
     {
-        Pheasant::instance()
+        \Pheasant::instance()
             ->register($class, $this->mapper)
             ->initialize($class, $callback)
-            ;
+        ;
     }
 
     public function testEventsBoundToSchema()
@@ -43,10 +42,10 @@ class EventsTest extends \Pheasant\Tests\MysqlTestCase
         $this->initialize('Pheasant\DomainObject', function ($builder) use ($callback) {
             $builder->properties([
                 'test' => new Types\StringType(),
-                ]);
+            ]);
             $builder->events([
                 'afterCreate' => $callback,
-                ]);
+            ]);
         });
 
         $do = new DomainObject();
@@ -65,7 +64,7 @@ class EventsTest extends \Pheasant\Tests\MysqlTestCase
         $this->initialize('Pheasant\DomainObject', function ($builder) {
             $builder->properties([
                 'test' => new Types\StringType(),
-                ]);
+            ]);
         });
 
         $do1 = new DomainObject();
@@ -73,11 +72,11 @@ class EventsTest extends \Pheasant\Tests\MysqlTestCase
 
         $do1->events([
             'afterSave' => function ($e) use (&$events) { $events[] = "do1.$e"; },
-            ]);
+        ]);
 
         $do2->events([
             'afterSave' => function ($e) use (&$events) { $events[] = "do2.$e"; },
-            ]);
+        ]);
 
         $do1->save();
         $do2->save();
@@ -92,7 +91,7 @@ class EventsTest extends \Pheasant\Tests\MysqlTestCase
         $this->initialize('Pheasant\Tests\Examples\EventTestObject', function ($builder) {
             $builder->properties([
                 'test' => new Types\StringType(),
-                ]);
+            ]);
         });
 
         $do = EventTestObject::create(['test' => 'llamas']);
@@ -109,7 +108,7 @@ class EventsTest extends \Pheasant\Tests\MysqlTestCase
         $this->initialize('Pheasant\Tests\Examples\EventTestObject', function ($builder) {
             $builder->properties([
                 'test' => new Types\StringType(),
-                ]);
+            ]);
         });
 
         $do = EventTestObject::fromArray(['test' => 'llamas'], false);
@@ -134,7 +133,7 @@ class EventsTest extends \Pheasant\Tests\MysqlTestCase
         $this->initialize('Pheasant\Tests\Examples\EventTestObject', function ($builder) {
             $builder->properties([
                 'test' => new Types\StringType(),
-                ]);
+            ]);
         });
 
         $this->assertCount(1, $events);

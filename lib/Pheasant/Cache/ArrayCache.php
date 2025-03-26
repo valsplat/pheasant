@@ -2,14 +2,12 @@
 
 namespace Pheasant\Cache;
 
-use \Pheasant\Identity;
-
 /**
- * An in-memory array backed cache
+ * An in-memory array backed cache.
  */
 class ArrayCache implements \Pheasant\Cache
 {
-    private $_cache=array();
+    private $_cache = [];
 
     public function has($hash)
     {
@@ -31,6 +29,6 @@ class ArrayCache implements \Pheasant\Cache
 
     public function clear()
     {
-        $this->_cache = array();
+        $this->_cache = [];
     }
 }
